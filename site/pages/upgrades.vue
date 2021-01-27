@@ -75,7 +75,29 @@
           :items="filtered"
           :search="search"
           :multi-sort="true"
+          :expanded.sync="expanded"
+          item-key="name"
+          show-expand
         >
+          <template v-slot:item.issueSummary="{ item }">
+            <v-icon small :color="item.issueSummary">{{
+              getIcon(item.issueSummary)
+            }}</v-icon>
+          </template>
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              <h3>Issues</h3>
+              <ul>
+                <li v-for="issue in item.issues" :key="issue">
+                  <v-icon small color="red" v-if="issue.red">mdi-alert</v-icon>
+                  <v-icon small color="yellow" v-if="issue.yellow"
+                    >mdi-alert</v-icon
+                  >
+                  {{ issue.red }}{{ issue.yellow }}
+                </li>
+              </ul>
+            </td>
+          </template>
           <template v-slot:item.actions="{ item }">
             <v-menu bottom left>
               <template v-slot:activator="{ on, attrs }">
@@ -115,12 +137,14 @@ export default {
   data() {
     return {
       search: "",
+      expanded: [],
       headers: [
         {
           text: "Site",
           align: "start",
           value: "name",
         },
+        { text: "Issues", value: "issueSummary" },
         { text: "CMS", value: "cms" },
         { text: "CMS Version", value: "cms_version" },
         { text: "CMS Status", value: "cms_version_stability" },
@@ -143,6 +167,11 @@ export default {
         let newSite = { ...site };
         // newSite.cms = `${site.cms} ${site.cms_version}`;
         newSite.dashboardLink = `https://dashboard.pantheon.io/sites/${site.pantheon_id}`;
+        newSite.issueSummary = site.issues.find((issue) => issue["red"])
+          ? "red"
+          : site.issues.find((issue) => issue["yellow"])
+          ? "yellow"
+          : "green";
         return newSite;
       });
     },
@@ -163,6 +192,19 @@ export default {
             .map((site) => site[val])
         ),
       ];
+    },
+    getIcon(color) {
+      switch (color) {
+        case "green":
+          return "mdi-check";
+          break;
+        case "yellow":
+          return "mdi-alert";
+          break;
+        case "red":
+          return "mdi-alert";
+          break;
+      }
     },
   },
 };
