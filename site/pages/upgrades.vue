@@ -79,23 +79,66 @@
           item-key="name"
           show-expand
         >
-          <template v-slot:item.issueSummary="{ item }">
+          <template v-slot:item.issueCount="{ item }">
             <v-icon small :color="item.issueSummary">{{
               getIcon(item.issueSummary)
-            }}</v-icon>
+            }}</v-icon
+            ><span v-if="item.issueCount > 0"> ({{ item.issueCount }})</span>
           </template>
           <template v-slot:expanded-item="{ headers, item }">
             <td :colspan="headers.length">
-              <h3>Issues</h3>
-              <ul>
-                <li v-for="issue in item.issues" :key="issue">
-                  <v-icon small color="red" v-if="issue.red">mdi-alert</v-icon>
-                  <v-icon small color="yellow" v-if="issue.yellow"
-                    >mdi-alert</v-icon
-                  >
-                  {{ issue.red }}{{ issue.yellow }}
-                </li>
-              </ul>
+              <v-row>
+                <v-col><SiteIssuesCard :site="item" /></v-col>
+                <v-col>
+                  <v-card :elevation="0">
+                    <v-list>
+                      <v-subheader class="uppercase">Tools</v-subheader>
+                      <v-list-item>
+                        <v-list-item-content>Upstream</v-list-item-content>
+                        <v-list-item-content class="align-end">
+                          {{ item.upstream_status }}
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider></v-divider>
+                      <v-list-item>
+                        <v-list-item-content>New Relic</v-list-item-content>
+                        <v-list-item-content class="align-end">
+                          {{ item.new_relic_status }}
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider></v-divider>
+                    </v-list>
+                  </v-card>
+                </v-col>
+                <v-col>
+                  <v-card :elevation="0">
+                    <v-list>
+                      <v-subheader class="uppercase">Plugin V/U/T</v-subheader>
+                      <v-list-item>
+                        <v-list-item-content>Vulnerable</v-list-item-content>
+                        <v-list-item-content class="align-end">
+                          {{ item.pluginVulnerabilities.length }}
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider></v-divider>
+                      <v-list-item>
+                        <v-list-item-content>Upgrade</v-list-item-content>
+                        <v-list-item-content class="align-end">
+                          {{ item.pluginUpgrades.length }}
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider></v-divider>
+                      <v-list-item>
+                        <v-list-item-content>Total</v-list-item-content>
+                        <v-list-item-content class="align-end">
+                          {{ item.pluginEntries.length }}
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider></v-divider>
+                    </v-list>
+                  </v-card>
+                </v-col>
+              </v-row>
             </td>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -117,22 +160,14 @@
             </v-menu>
           </template>
         </v-data-table>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            href="https://dashboard.pantheon.io/organizations/fffc93bd-ab50-42e2-8219-676ac29837d0#sites/sites"
-            target="_blank"
-            >Pantheon</v-btn
-          >
-        </v-card-actions>
+        <v-card-actions> </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import SiteIssuesCard from "../components/SiteIssuesCard";
 export default {
   data() {
     return {
@@ -144,14 +179,11 @@ export default {
           align: "start",
           value: "name",
         },
-        { text: "Issues", value: "issueSummary" },
-        { text: "CMS", value: "cms" },
-        { text: "CMS Version", value: "cms_version" },
+        { text: "Issues", value: "issueCount" },
+        { text: "CMS", value: "cmsDisplay" },
         { text: "CMS Status", value: "cms_version_stability" },
-        { text: "PHP", value: "php_version" },
-        { text: "PHP Status", value: "php_version_stability" },
-        { text: "Upstream", value: "upstream_status" },
-        { text: "New Relic", value: "new_relic_status" },
+        { text: "Plugin V/U/T", value: "pluginDisplay" },
+        { text: "PHP", value: "phpDisplay" },
         { text: "Actions", value: "actions", sortable: false, align: "end" },
       ],
       filters: {
@@ -165,13 +197,23 @@ export default {
     sites() {
       return this.$store.state.sites.list.map((site) => {
         let newSite = { ...site };
-        // newSite.cms = `${site.cms} ${site.cms_version}`;
         newSite.dashboardLink = `https://dashboard.pantheon.io/sites/${site.pantheon_id}`;
-        newSite.issueSummary = site.issues.find((issue) => issue["red"])
-          ? "red"
-          : site.issues.find((issue) => issue["yellow"])
-          ? "yellow"
-          : "green";
+        newSite.cmsDisplay = `${site.cms} ${site.cms_version}`;
+        newSite.phpDisplay = `${site.php_version} ${site.php_version_stability}`;
+        newSite.issueSummary = this.getOveralIssueColor(site.issues);
+        const pluginEntries = site.plugins ? Object.values(site.plugins) : [];
+        newSite.pluginEntries = pluginEntries;
+        newSite.pluginUpgrades = site.plugins
+          ? pluginEntries.filter((plugin) => plugin.needs_update !== "0")
+          : [];
+        newSite.pluginVulnerabilities = site.plugins
+          ? pluginEntries.filter((plugin) => {
+              console.info(plugin);
+              return plugin.vulnerable !== "None";
+            })
+          : [];
+        newSite.pluginDisplay = `${newSite.pluginVulnerabilities.length} / ${newSite.pluginUpgrades.length} / ${pluginEntries.length}`;
+        newSite.issueCount = site.issues.length;
         return newSite;
       });
     },
@@ -193,6 +235,16 @@ export default {
         ),
       ];
     },
+    getOveralIssueColor(issues) {
+      return issues.find((issue) => issue.level == "alert")
+        ? "red"
+        : issues.find((issue) => issue.level == "warning")
+        ? "yellow"
+        : "green";
+    },
+    getIssueColor(level) {
+      return level == "alert" ? "red" : level == "warning" ? "yellow" : "green";
+    },
     getIcon(color) {
       switch (color) {
         case "green":
@@ -207,5 +259,14 @@ export default {
       }
     },
   },
+  components: {
+    SiteIssuesCard,
+  },
 };
 </script>
+
+<style scoped>
+.uppercase {
+  text-transform: uppercase;
+}
+</style>
