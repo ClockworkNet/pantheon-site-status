@@ -2,7 +2,6 @@
   <v-row justify="center" align="center">
     <v-col cols="12">
       <v-card>
-        <v-card-title class="headline"> Pantheon Site Status </v-card-title>
         <v-card-text>
           <v-row align="end">
             <v-col cols="3">
@@ -208,7 +207,6 @@ export default {
           : [];
         newSite.pluginVulnerabilities = site.plugins
           ? pluginEntries.filter((plugin) => {
-              console.info(plugin);
               return plugin.vulnerable !== "None";
             })
           : [];
