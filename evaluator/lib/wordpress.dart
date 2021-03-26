@@ -14,10 +14,10 @@ class WordPress {
   /// Get the current stable version of WordPress.
   Future<String> fetchCurrentVersion() {
     if (_currentVersion != null) return Future(() => _currentVersion);
+    var url =
+        Uri.https('https://api.wordpress.org', '/core/version-check/1.7/');
 
-    return http
-        .get('https://api.wordpress.org/core/version-check/1.7/')
-        .then((response) {
+    return http.get(url).then((response) {
       final Map<String, dynamic> json = jsonDecode(response.body);
       if (json.containsKey('offers') == false) return 'Unknown';
       _currentVersion = json['offers'][0]['current'];
@@ -37,9 +37,9 @@ class WordPress {
       return Future(() => _stability(version));
     }
 
-    return http
-        .get('https://api.wordpress.org/core/stable-check/1.0/')
-        .then((response) {
+    var url = Uri.https('https://api.wordpress.org', '/core/stable-check/1.0/');
+
+    return http.get(url).then((response) {
       final Map<String, dynamic> json = jsonDecode(response.body);
       _versions = Map<String, String>.from(json);
       return _stability(version);

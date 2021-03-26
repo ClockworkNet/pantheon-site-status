@@ -19,3 +19,14 @@ The evaluator is a Flutter script. The script performs these high-level actions:
 
 ### Local Dev Prerequisites
 - Dart version < 2.0
+- terminus (from Pantheon)
+
+### Docker
+```
+docker build -t sinfo .
+docker run -i -t sinfo
+```
+
+### Unit Tests
+`dart test`
+
