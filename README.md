@@ -22,8 +22,10 @@ The evaluator is a Flutter script. The script performs these high-level actions:
 - terminus (from Pantheon)
 
 ### Docker
+The following commands build a static container based and then run it interactively.
+
 ```
-docker build -t sinfo .
+docker build -t sinfo ./evaluator
 docker run -i -t sinfo
 ```
 
