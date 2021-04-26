@@ -24,10 +24,28 @@ The evaluator is a Flutter script. The script performs these high-level actions:
 ### Docker
 The following commands build a static container based and then run it interactively.
 
+When working with docker:
+
 ```
 docker build -t sinfo ./evaluator
-docker run -i -t sinfo
+docker build --no-cache -t sinfo ./evaluator
+
+
+docker run -it --entrypoint=bash sinfo
+
+docker run -it sinfo
 ```
+
+When working with docker compose:
+
+```
+cd evaluator
+docker-compose build buildchain
+
+-- more to come -- 
+
+```
+
 
 ### Unit Tests
 `dart test`
