@@ -14,6 +14,18 @@ class Pantheon {
   /// Default constructor.
   Pantheon({@required this.pantheonOrgId});
 
+  /// Return true if Pantheon's terminus is installed.
+  Future<bool> isTerminusInstalled() async {
+    try {
+      await Process.run('terminus', [
+        '--version',
+      ]);
+    } on ProcessException catch (_) {
+      return false;
+    }
+    return true;
+  }
+
   /// Get the list of all sites from Pantheon, trying the cache first.
   Future<Map<dynamic, dynamic>> fetchSitesJson() async {
     return Process.run('terminus', [
