@@ -29,7 +29,13 @@ class SinfoManager {
   Future<File> sitesFile() {
     Console.init();
     pantheon = Pantheon(pantheonOrgId: pantheonOrgId);
-    return _sitesFromPantheon().then(_enrichSites).then(_saveSitesAsJson);
+    return pantheon.isTerminusInstalled().then((isInstalled) {
+      if (isInstalled) {
+        return _sitesFromPantheon().then(_enrichSites).then(_saveSitesAsJson);
+      }
+      print('Error > terminus is not installed or not accessible.');
+      return null;
+    });
   }
 
   /// Get all the organization's sites from Pantheon while
