@@ -31,9 +31,9 @@ RUN apt-get update && apt-get install -y \
 ENV PATH="$PATH:/usr/lib/dart/bin"
 
 # Install the evaluator
-COPY ../evaluator /usr/src/evaluator
+COPY ./evaluator /usr/src/evaluator
 WORKDIR /usr/src/evaluator
 
 RUN dart pub get
 
-CMD ["dart", "./bin/main.dart", "-h"]
+CMD ["dart", "./bin/main.dart"]

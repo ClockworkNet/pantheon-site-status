@@ -6,8 +6,7 @@
 
 # Setup vars for our important paths.
 BIN_PATH=$(cd "$(dirname "${BASH_SOURCE}")" ; pwd -P)
-BUILD_ROOT="$(dirname "${BIN_PATH}")"
-PROJECT_ROOT="$(dirname "${BUILD_ROOT}")"
+PROJECT_ROOT="$(dirname "${BIN_PATH}")"
 
-docker build -t sinfo ${PROJECT_ROOT}/evaluator
+docker build -t sinfo ${PROJECT_ROOT}
 docker run -it sinfo
