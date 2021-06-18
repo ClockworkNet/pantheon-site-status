@@ -21,32 +21,18 @@ The evaluator is a Flutter script. The script performs these high-level actions:
 - Dart version < 2.0
 - terminus (from Pantheon)
 
-### Docker
-The following commands build a static container based and then run it interactively.
-
-When working with docker:
-
-```
-docker build -t sinfo ./evaluator
-docker build --no-cache -t sinfo ./evaluator
-
-
-docker run -it --entrypoint=bash sinfo
-
-docker run -it sinfo
-```
-
-When working with docker compose:
-
-```
-cd evaluator
-docker-compose build buildchain
-
--- more to come -- 
-
-```
-
-
 ### Unit Tests
 `dart test`
 
+### Buildchain
+A Docker container is used to imlement the build chain. Helper bin scripts have been provided for actions with the build chain.
+
+#### Executing the buildchain
+`./buildchain/bin/build.sh`
+
+#### Shelling into the buildchain
+`./buildchain/bin/shell.sh`
+
+### TO DO
+
+- Figure out how to authorize terminus within the buildchain

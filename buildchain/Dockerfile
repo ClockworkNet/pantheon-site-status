@@ -1,7 +1,6 @@
-# Setup a docker image with Terminus and Dart. 
-# Base the image on an image that supports PHP and composer
-
-# Setup a base Debian image that provides: PHP, composer, Pantheon's terminus, and Dart.
+# Setup a docker image with Pantheon's Terminus and Google's Dart. 
+# We are using a base the image on an image that supports PHP and composer
+# so we can more easily work with Terminus.
 FROM php:7.4
 
 # Install Composer
@@ -12,8 +11,8 @@ RUN apt-get update && apt-get install -y \
     git
 
 RUN composer global require pantheon-systems/terminus
+
 ENV PATH="/root/.composer/vendor/bin:${PATH}"
-#ENV TERMINUS_USER_HOME=/tmp
 
 # Install Dart
 RUN apt-get install -y \
@@ -31,7 +30,8 @@ RUN apt-get update && apt-get install -y \
 
 ENV PATH="$PATH:/usr/lib/dart/bin"
 
-COPY . /usr/src/evaluator
+# Install the evaluator
+COPY ../evaluator /usr/src/evaluator
 WORKDIR /usr/src/evaluator
 
 RUN dart pub get
