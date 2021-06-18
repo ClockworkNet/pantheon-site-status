@@ -2,7 +2,7 @@
 # Base the image on an image that supports PHP and composer
 
 # Setup a base Debian image that provides: PHP, composer, Pantheon's terminus, and Dart.
-FROM php:8
+FROM php:7.4
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -14,8 +14,6 @@ RUN apt-get update && apt-get install -y \
 RUN composer global require pantheon-systems/terminus
 ENV PATH="/root/.composer/vendor/bin:${PATH}"
 #ENV TERMINUS_USER_HOME=/tmp
-
-
 
 # Install Dart
 RUN apt-get install -y \
@@ -33,4 +31,9 @@ RUN apt-get update && apt-get install -y \
 
 ENV PATH="$PATH:/usr/lib/dart/bin"
 
-# CMD npm run build-prod
+COPY . /usr/src/evaluator
+WORKDIR /usr/src/evaluator
+
+RUN dart pub get
+
+CMD ["dart", "./bin/main.dart", "-h"]

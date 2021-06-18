@@ -9,6 +9,7 @@ dependencies:
   args: ^1.6.0
   console: ^3.1.0
   http: ^0.12.2
+  intl: ^0.17.0
   path: ^1.7.0
 
 dev_dependencies:
