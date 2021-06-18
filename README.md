@@ -34,5 +34,5 @@ A Docker container is used to imlement the buildchain. Helper bin scripts have b
 `./bin/shell.sh`
 
 ### TO DO
-- Figure out how to authorize terminus within the buildchain
 - Fix the strange character error that just showed up when processing
+- Figure out how to authorize terminus within the buildchain
