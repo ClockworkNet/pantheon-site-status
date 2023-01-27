@@ -23,12 +23,12 @@ class SinfoManager {
   Pantheon pantheon;
 
   /// Default constructor.
-  SinfoManager({this.pantheonOrgId, this.resultsPath});
+  SinfoManager({this.pantheonOrgId = '', this.resultsPath = ''})
+      : pantheon = Pantheon(pantheonOrgId: pantheonOrgId);
 
   /// Gather data about an organization's Pantheon sites.
-  Future<File> sitesFile() {
+  Future<File?> sitesFile() {
     Console.init();
-    pantheon = Pantheon(pantheonOrgId: pantheonOrgId);
     return pantheon.isTerminusInstalled().then((isInstalled) {
       if (isInstalled) {
         return _sitesFromPantheon().then(_enrichSites).then(_saveSitesAsJson);

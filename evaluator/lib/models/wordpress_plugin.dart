@@ -20,11 +20,11 @@ class WordPressPlugin extends Model {
 
   /// Default constructor.
   const WordPressPlugin({
-    this.slug,
-    this.installedVersion,
-    this.availableVersion,
-    this.needsUpdate,
-    this.vulnerableDescription,
+    this.slug = '',
+    this.installedVersion = '',
+    this.availableVersion = '',
+    this.needsUpdate = false,
+    this.vulnerableDescription = '',
   });
 
   /// Create the model from JSON.
@@ -40,7 +40,7 @@ class WordPressPlugin extends Model {
 
   /// Get a list of plugins from Panteon's plugin JSON.
   static List<WordPressPlugin> pluginsFromJson(Map<String, dynamic> json) {
-    if (json == null) return [];
+    if (json.isEmpty) return [];
     if (json.containsKey('plugins') != true) return [];
     if (json['plugins'].containsKey('alerts') != true) return [];
 

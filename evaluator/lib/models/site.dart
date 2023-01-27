@@ -20,7 +20,7 @@ class Site extends Model {
   final String cmsName;
 
   /// Date the site was created in Pantheon.
-  final DateTime created;
+  final DateTime? created;
 
   /// Pantheon tags associated with the site.
   final List<String> pantheonTags;
@@ -59,19 +59,19 @@ class Site extends Model {
   /// Default constructor.
   Site({
     this.created,
-    this.cmsName,
-    this.isFrozen,
-    this.pantheonId,
-    this.pantheonName,
-    this.pantheonPlanName,
-    this.pantheonTags,
-    this.phpVersion,
-    this.phpStability,
-    this.liveUrl,
-    this.newRelicStatus,
-    this.upstreamStatus,
-    this.cmsVersion,
-    this.cmsStability,
+    this.cmsName = '',
+    this.isFrozen = false,
+    this.pantheonId = '',
+    this.pantheonName = '',
+    this.pantheonPlanName = '',
+    this.pantheonTags = const [],
+    this.phpVersion = '',
+    this.phpStability = '',
+    this.liveUrl = '',
+    this.newRelicStatus = '',
+    this.upstreamStatus = '',
+    this.cmsVersion = '',
+    this.cmsStability = '',
   })  : issues = [],
         plugins = [];
 
@@ -86,7 +86,8 @@ class Site extends Model {
   Map<String, dynamic> toJson() => {
         'name': pantheonName,
         'pantheon_id': pantheonId,
-        'created': DateFormat('yyyy-MMM-dd').format(created),
+        'created':
+            created == null ? '' : DateFormat('yyyy-MMM-dd').format(created!),
         'cms': cmsName,
         'cms_version': cmsVersion,
         'cms_version_status': cmsStability,
@@ -107,8 +108,8 @@ class Site extends Model {
     final cmsName = framework == 'drupal8' ? 'drupal' : framework;
 
     final tagsString = Model.fieldAsString(json, 'tags');
-    List<String> tags;
-    if (tagsString != null && tagsString.isNotEmpty) {
+    var tags = const <String>[];
+    if (tagsString.isNotEmpty) {
       tags = tagsString.split(',');
     }
 

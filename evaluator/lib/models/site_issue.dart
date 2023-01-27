@@ -16,10 +16,10 @@ class SiteIssue extends Model {
 
   /// Default constructor.
   const SiteIssue({
-    this.severity,
-    this.relatedField,
-    this.description,
-    this.referenceUrl,
+    this.severity = '',
+    this.relatedField = '',
+    this.description = '',
+    this.referenceUrl = '',
   });
 
   /// Convert an issue to JSON.

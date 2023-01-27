@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:meta/meta.dart';
-
 import 'models/site.dart';
 import 'models/wordpress_plugin.dart';
 
@@ -12,7 +10,7 @@ class Pantheon {
   final String pantheonOrgId;
 
   /// Default constructor.
-  Pantheon({@required this.pantheonOrgId});
+  Pantheon({required this.pantheonOrgId});
 
   /// Return true if Pantheon's terminus is installed.
   Future<bool> isTerminusInstalled() async {
@@ -121,6 +119,7 @@ class Pantheon {
       'plugins',
       '--format=json',
     ]).then((result) {
+      if (result.exitCode == 1) return const [];
       return WordPressPlugin.pluginsFromJson(json.decode(result.stdout));
     });
   }
