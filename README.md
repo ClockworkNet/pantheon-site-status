@@ -1,8 +1,15 @@
 # pantheon-site-status
 
+## Repo Structure
+
+The repo is divided into two parts:
+
+- static website
+- site data gatherer
+
 ## Static Site
 
-### More to come!
+Kevin add details here.
 
 ## Pantheon Site Evaluator
 
@@ -15,24 +22,38 @@ The evaluator is a Dart script. The script performs these high-level actions:
 
 ### Running the Evaluator from the Command Line
 
-```dart ./evaluator/bin/main.dart -h```
+```zsh
+dart ./evaluator/bin/main.dart -h
+```
 
 ### Local Dev Prerequisites
+
 - Dart version < 2.0
 - terminus (from Pantheon)
 
 ### Unit Tests
-`dart ./evaluator/test`
+
+```zsh
+cd evaluator
+dart test
+```
 
 ### Buildchain
-A Docker container is used to imlement the buildchain. Helper bin scripts have been provided for actions with the build chain.
+
+A Docker container is used to implement the buildchain. Helper bin scripts have been provided for actions with the build chain.
 
 #### Executing the buildchain
-`./bin/build.sh`
+
+```zsh
+./bin/build.sh
+```
 
 #### Shelling into the buildchain
-`./bin/shell.sh`
+
+```zsh
+./bin/shell.sh
+```
 
 ### TO DO
-- Fix the strange character error that just showed up when processing
+
 - Figure out how to authorize terminus within the buildchain

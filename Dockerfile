@@ -1,7 +1,7 @@
 # Setup a docker image with Pantheon's Terminus and Google's Dart. 
 # We are using a base the image on an image that supports PHP and composer
 # so we can more easily work with Terminus.
-FROM php:7.4
+FROM php:8.2
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -24,9 +24,15 @@ RUN sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt
     && sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
 
 RUN apt-get update && apt-get install -y \
-    dart \
+    apt-transport-https \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+RUN sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+
+RUN apt-get update
+RUN apt-get install dart
 
 ENV PATH="$PATH:/usr/lib/dart/bin"
 
