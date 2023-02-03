@@ -1,4 +1,4 @@
-import sites from '~/data/sites_list_enriched.json';
+import sites from '~/data/sites.json';
 
 export const state = () => ({
     list: sites
