@@ -10,9 +10,11 @@ class Evaluator {
     '7.0': 'end of life',
     '7.1': 'end of life',
     '7.2': 'end of life',
-    '7.3': 'security fixes only',
-    '7.4': 'active',
-    '8.0': 'active',
+    '7.3': 'end of life',
+    '7.4': 'end of life',
+    '8.0': 'security fixes only',
+    '8.1': 'active',
+    '8.2': 'active',
   };
 
   /// Mapping of PHP status values to their alert level.

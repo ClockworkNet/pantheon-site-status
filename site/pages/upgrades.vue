@@ -57,8 +57,8 @@
                 multiple
                 clearable
                 label="PHP status"
-                :items="columnValueList('php_version_stability')"
-                v-model="filters['php_version_stability']"
+                :items="columnValueList('php_version_status')"
+                v-model="filters['php_version_status']"
               >
                 <template v-slot:selection="{ item, index }">
                   <span v-if="index === 0" class="grey--text caption">
@@ -188,7 +188,7 @@ export default {
       filters: {
         cms: [],
         cms_version_stability: [],
-        php_version_stability: [],
+        php_version_status: [],
       },
     };
   },
@@ -198,7 +198,7 @@ export default {
         let newSite = { ...site };
         newSite.dashboardLink = `https://dashboard.pantheon.io/sites/${site.pantheon_id}`;
         newSite.cmsDisplay = `${site.cms} ${site.cms_version}`;
-        newSite.phpDisplay = `${site.php_version} ${site.php_version_stability}`;
+        newSite.phpDisplay = `${site.php_version} ${site.php_version_status}`;
         newSite.issueSummary = this.getOveralIssueColor(site.issues);
         const pluginEntries = site.plugins ? Object.values(site.plugins) : [];
         newSite.pluginEntries = pluginEntries;
