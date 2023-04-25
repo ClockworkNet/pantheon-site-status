@@ -23,12 +23,11 @@ The evaluator is a Dart script. The script performs these high-level actions:
 ### Running the Evaluator from the Command Line
 
 ```zsh
-dart ./evaluator/bin/main.dart -h
+dart ./evaluator/bin/main.dart
 ```
 
 ### Local Dev Prerequisites
 
-- Dart version < 2.0
 - terminus (from Pantheon)
 
 ### Unit Tests
