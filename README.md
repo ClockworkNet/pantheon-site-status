@@ -57,3 +57,10 @@ A Docker container is used to implement the buildchain. Helper bin scripts have 
 ### TO DO
 
 - Figure out how to authorize terminus within the buildchain
+
+## Change Cases
+
+### Updating Supported PHP Versions
+
+1. Open this file `evaluator/lib/evaluator.dart`
+2. Edit the contents of the variable `_phpVersions`
