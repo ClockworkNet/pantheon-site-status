@@ -9,7 +9,7 @@ The repo is divided into two parts:
 
 ## Static Site
 
-Kevin add details here.
+Review [site/readme.md](./site/README.md).
 
 ## Pantheon Site Evaluator
 

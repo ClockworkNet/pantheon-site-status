@@ -39,8 +39,8 @@
                 multiple
                 clearable
                 label="CMS Status"
-                :items="columnValueList('cms_version_stability')"
-                v-model="filters['cms_version_stability']"
+                :items="columnValueList('cms_version_status')"
+                v-model="filters['cms_version_status']"
               >
                 <template v-slot:selection="{ item, index }">
                   <span v-if="index === 0" class="grey--text caption">
@@ -180,14 +180,14 @@ export default {
         },
         { text: "Issues", value: "issueCount" },
         { text: "CMS", value: "cmsDisplay" },
-        { text: "CMS Status", value: "cms_version_stability" },
+        { text: "CMS Status", value: "cms_version_status" },
         { text: "Plugin V/U/T", value: "pluginDisplay" },
         { text: "PHP", value: "phpDisplay" },
         { text: "Actions", value: "actions", sortable: false, align: "end" },
       ],
       filters: {
         cms: [],
-        cms_version_stability: [],
+        cms_version_status: [],
         php_version_status: [],
       },
     };

@@ -28,5 +28,9 @@
     "eslint": "^7.18.0",
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-vue": "^7.4.1"
+  },
+  "engines": {
+    "node": ">=18.16.0",
+    "yarn": ">=1.22.19"
   }
 }
