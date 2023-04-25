@@ -17,7 +17,7 @@ export const getters = {
                 const key = entry[0];
                 const plugin = entry[1];
                 if (!plugins[key]) plugins[key] = {
-                    name: key,
+                    name: plugin.slug,
                     sites: [],
                     upgrades: [],
                     latest: plugin.available
