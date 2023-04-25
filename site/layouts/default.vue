@@ -71,25 +71,25 @@ export default {
       fixed: true,
       items: [
         {
-          icon: "mdi-apps",
-          title: "Dashboard",
-          to: "/",
-        },
-        {
           icon: "mdi-chart-bubble",
-          title: "Upgrades",
-          to: "/upgrades",
+          title: "Sites",
+          to: "/",
         },
         {
           icon: "mdi-puzzle",
           title: "Plugins",
           to: "/plugins",
         },
+        {
+          icon: "mdi-apps",
+          title: "Pantheon Overview",
+          to: "/overview",
+        },
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "Pantheon Site Status",
+      title: "Clockwork's Pantheon Site Status",
     };
   },
 };
