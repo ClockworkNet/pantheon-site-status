@@ -4,7 +4,7 @@
       <SiteSummaryCard param="cms" label="CMS" />
     </v-col>
     <v-col md="3" sm="6">
-      <SiteSummaryCard param="cms_version_stability" label="CMS Stability" />
+      <SiteSummaryCard param="cms_version_status" label="CMS Stability" />
     </v-col>
     <v-col md="3" sm="6">
       <SiteSummaryCard param="php_version" label="PHP Versions" />
