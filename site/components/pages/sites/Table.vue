@@ -18,12 +18,41 @@
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
           <v-row>
-            <v-col><SiteIssuesCard :site="item" /></v-col>
             <v-col>
               <v-card :elevation="0">
                 <v-list>
-                  <v-subheader class="uppercase">Tools</v-subheader>
                   <v-list-item>
+                    <v-list-item-icon>
+                      <PagesSitesIssueIconForField fieldName="plugin" :site="item"></PagesSitesIssueIconForField>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      Plugins
+                    </v-list-item-content>
+                    <v-list-item-content class="align-end">
+                      Vulnerable: {{ item.pluginVulnerabilities.length }}<br>
+                      Upgrade: {{ item.pluginUpgrades.length }}<br>
+                      Total: {{ item.pluginEntries.length }}<br>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider></v-divider>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <PagesSitesIssueIconForField fieldName="cms_version_status" :site="item"></PagesSitesIssueIconForField>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      CMS
+                    </v-list-item-content>
+                    <v-list-item-content class="align-end">
+                      {{ item.cms }}<br>
+                      {{ item.cms_version }}<br>
+                      {{ item.cms_version_status }}
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider></v-divider>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <PagesSitesIssueIconForField fieldName="upstream_status" :site="item"></PagesSitesIssueIconForField>
+                    </v-list-item-icon>
                     <v-list-item-content>Upstream</v-list-item-content>
                     <v-list-item-content class="align-end">
                       {{ item.upstream_status }}
@@ -31,37 +60,23 @@
                   </v-list-item>
                   <v-divider></v-divider>
                   <v-list-item>
+                    <v-list-item-icon>
+                      <PagesSitesIssueIconForField fieldName="php_version_status" :site="item"></PagesSitesIssueIconForField>
+                    </v-list-item-icon>
+                    <v-list-item-content>PHP</v-list-item-content>
+                    <v-list-item-content class="align-end">
+                      {{ item.php_version }}<br>
+                      {{ item.php_version_status }}
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider></v-divider>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <PagesSitesIssueIconForField fieldName="new_relic_status" :site="item"></PagesSitesIssueIconForField>
+                    </v-list-item-icon>
                     <v-list-item-content>New Relic</v-list-item-content>
                     <v-list-item-content class="align-end">
                       {{ item.new_relic_status }}
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                </v-list>
-              </v-card>
-            </v-col>
-            <v-col>
-              <v-card :elevation="0">
-                <v-list>
-                  <v-subheader class="uppercase">Plugin V/U/T</v-subheader>
-                  <v-list-item>
-                    <v-list-item-content>Vulnerable</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      {{ item.pluginVulnerabilities.length }}
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                  <v-list-item>
-                    <v-list-item-content>Upgrade</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      {{ item.pluginUpgrades.length }}
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                  <v-list-item>
-                    <v-list-item-content>Total</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      {{ item.pluginEntries.length }}
                     </v-list-item-content>
                   </v-list-item>
                   <v-divider></v-divider>
@@ -97,6 +112,7 @@
 <script>
 export default {
   props: [
+    'search',
     'sites',
   ],
   data() {
@@ -108,12 +124,8 @@ export default {
           align: "start",
           value: "name",
         },
-        { text: "Issues", value: "issuePriority" },
-        { text: "CMS", value: "cmsDisplay" },
-        { text: "CMS Status", value: "cms_version_status" },
-        { text: "Plugin V/U/T", value: "pluginDisplay" },
-        { text: "PHP", value: "phpDisplay" },
-        { text: "Actions", value: "actions", sortable: false, align: "end" },
+        { text: "Issues", value: "issuePriority", width: 100 },
+        { text: "Actions", value: "actions", sortable: false, align: "end", width: 75 },
       ]
     }
   },
@@ -138,3 +150,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.v-list-item__icon {
+  align-self: auto;
+}
+</style>

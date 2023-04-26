@@ -70,7 +70,6 @@
 </template>
 
 <script>
-import SiteIssuesCard from "../components/SiteIssuesCard";
 export default {
   data() {
     return {
@@ -87,8 +86,6 @@ export default {
       return this.$store.state.sites.list.map((site) => {
         let newSite = { ...site };
         newSite.dashboardLink = `https://dashboard.pantheon.io/sites/${site.pantheon_id}`;
-        newSite.cmsDisplay = `${site.cms} ${site.cms_version}`;
-        newSite.phpDisplay = `${site.php_version} ${site.php_version_status}`;
         newSite.issueLevel = this.getOveralIssueLevel(site.issues);
         newSite.issueSummary = this.getOveralIssueColor(site.issues);
         const pluginEntries = site.plugins ? Object.values(site.plugins) : [];
@@ -140,9 +137,6 @@ export default {
         ? "yellow"
         : "green";
     },
-  },
-  components: {
-    SiteIssuesCard,
   },
 };
 </script>
