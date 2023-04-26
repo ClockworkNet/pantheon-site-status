@@ -16,7 +16,7 @@
         <v-icon small :color="item.issueSummary">{{
           getIcon(item.issueSummary)
         }}</v-icon
-        ><span v-if="item.issueCount > 0"> ({{ item.issueCount }})</span>
+        ><span v-if="item.issueCount > 0"> {{ item.issueCount }}</span>
       </template>
       <template v-slot:item.actions="{ item }">
         <v-menu bottom left>
@@ -56,7 +56,15 @@
                   <PagesSitesIssueIconForField fieldName="plugin" :site="site"></PagesSitesIssueIconForField>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  Plugins
+                  <span>
+                    Plugins
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon class="help_icon" color="black" size="x-small" v-on="on" v-bind="attrs">mdi-help</v-icon>
+                      </template>
+                      <span>CMS plugins installed on this site.</span>
+                    </v-tooltip>
+                  </span>
                 </v-list-item-content>
                 <v-list-item-content class="align-end">
                   Vulnerable: {{ site.pluginVulnerabilities.length }}<br>
@@ -70,7 +78,15 @@
                   <PagesSitesIssueIconForField fieldName="cms_version_status" :site="site"></PagesSitesIssueIconForField>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  CMS
+                  <span>
+                    CMS
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon class="help_icon" color="black" size="x-small" v-on="on" v-bind="attrs">mdi-help</v-icon>
+                      </template>
+                      <span>Content Management System powering this site.</span>
+                    </v-tooltip>
+                  </span>
                 </v-list-item-content>
                 <v-list-item-content class="align-end">
                   {{ site.cms }}<br>
@@ -83,7 +99,17 @@
                 <v-list-item-icon>
                   <PagesSitesIssueIconForField fieldName="upstream_status" :site="site"></PagesSitesIssueIconForField>
                 </v-list-item-icon>
-                <v-list-item-content>Upstream</v-list-item-content>
+                <v-list-item-content>
+                  <span>
+                    Upstream
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon class="help_icon" color="black" size="x-small" v-on="on" v-bind="attrs">mdi-help</v-icon>
+                      </template>
+                      <span>CMS upgrades and updates from Pantheon available to install.</span>
+                    </v-tooltip>
+                  </span>
+                </v-list-item-content>
                 <v-list-item-content class="align-end">
                   {{ site.upstream_status }}
                 </v-list-item-content>
@@ -93,7 +119,17 @@
                 <v-list-item-icon>
                   <PagesSitesIssueIconForField fieldName="php_version_status" :site="site"></PagesSitesIssueIconForField>
                 </v-list-item-icon>
-                <v-list-item-content>PHP</v-list-item-content>
+                <v-list-item-content>
+                  <span>
+                    PHP
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon class="help_icon" color="black" size="x-small" v-on="on" v-bind="attrs">mdi-help</v-icon>
+                      </template>
+                      <span>Status of the back-end programming language that runs the CMS.</span>
+                    </v-tooltip>
+                  </span>
+                </v-list-item-content>
                 <v-list-item-content class="align-end">
                   {{ site.php_version }}<br>
                   {{ site.php_version_status }}
@@ -104,7 +140,17 @@
                 <v-list-item-icon>
                   <PagesSitesIssueIconForField fieldName="new_relic_status" :site="site"></PagesSitesIssueIconForField>
                 </v-list-item-icon>
-                <v-list-item-content>New Relic</v-list-item-content>
+                <v-list-item-content>
+                  <span>
+                    New Relic
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon class="help_icon" color="black" size="x-small" v-on="on" v-bind="attrs">mdi-help</v-icon>
+                      </template>
+                      <span>A tool that developers use to troubleshoot issues with PHP, CMS code, slow sites, databases, down time, etc.</span>
+                    </v-tooltip>
+                  </span>
+                </v-list-item-content>
                 <v-list-item-content class="align-end">
                   {{ site.new_relic_status }}
                 </v-list-item-content>
@@ -179,6 +225,13 @@ export default {
 <style scoped>
 .v-list-item__icon {
   align-self: auto;
+}
+
+.help_icon {
+  background: #999;
+  border-radius: 9999px;
+  padding: 2px;
+  display: inline-block;
 }
 </style>
 
