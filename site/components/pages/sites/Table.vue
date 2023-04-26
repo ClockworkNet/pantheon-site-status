@@ -1,90 +1,22 @@
 <template>
-  <v-card>
+  <v-card class="sites-modal-table">
     <v-data-table
       :headers="headers"
       :items="sites"
       :search="search"
       :multi-sort="false"
-      :expanded.sync="expanded"
       item-key="name"
-      show-expand
+      items-per-page=10
+      fixed-header=true
+      v-on:click:row="rowClicked"
+      sort-by="issuePriority"
+      item-class="site-row"
     >
       <template v-slot:item.issuePriority="{ item }">
         <v-icon small :color="item.issueSummary">{{
           getIcon(item.issueSummary)
         }}</v-icon
         ><span v-if="item.issueCount > 0"> ({{ item.issueCount }})</span>
-      </template>
-      <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
-          <v-row>
-            <v-col>
-              <v-card :elevation="0">
-                <v-list>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <PagesSitesIssueIconForField fieldName="plugin" :site="item"></PagesSitesIssueIconForField>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      Plugins
-                    </v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      Vulnerable: {{ item.pluginVulnerabilities.length }}<br>
-                      Upgrade: {{ item.pluginUpgrades.length }}<br>
-                      Total: {{ item.pluginEntries.length }}<br>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <PagesSitesIssueIconForField fieldName="cms_version_status" :site="item"></PagesSitesIssueIconForField>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      CMS
-                    </v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      {{ item.cms }}<br>
-                      {{ item.cms_version }}<br>
-                      {{ item.cms_version_status }}
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <PagesSitesIssueIconForField fieldName="upstream_status" :site="item"></PagesSitesIssueIconForField>
-                    </v-list-item-icon>
-                    <v-list-item-content>Upstream</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      {{ item.upstream_status }}
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <PagesSitesIssueIconForField fieldName="php_version_status" :site="item"></PagesSitesIssueIconForField>
-                    </v-list-item-icon>
-                    <v-list-item-content>PHP</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      {{ item.php_version }}<br>
-                      {{ item.php_version_status }}
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <PagesSitesIssueIconForField fieldName="new_relic_status" :site="item"></PagesSitesIssueIconForField>
-                    </v-list-item-icon>
-                    <v-list-item-content>New Relic</v-list-item-content>
-                    <v-list-item-content class="align-end">
-                      {{ item.new_relic_status }}
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                </v-list>
-              </v-card>
-            </v-col>
-          </v-row>
-        </td>
       </template>
       <template v-slot:item.actions="{ item }">
         <v-menu bottom left>
@@ -105,7 +37,94 @@
         </v-menu>
       </template>
     </v-data-table>
-    <v-card-actions> </v-card-actions>
+
+
+    <div class="text-center">
+      <v-dialog
+        v-model="dialog"
+        width="500">
+
+        <v-card v-if="!!site">
+          <v-card-title class="text-h5">
+            {{ site.name }}
+          </v-card-title>
+
+          <v-card-text>
+            <v-list>
+              <v-list-item>
+                <v-list-item-icon>
+                  <PagesSitesIssueIconForField fieldName="plugin" :site="site"></PagesSitesIssueIconForField>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  Plugins
+                </v-list-item-content>
+                <v-list-item-content class="align-end">
+                  Vulnerable: {{ site.pluginVulnerabilities.length }}<br>
+                  Upgrade: {{ site.pluginUpgrades.length }}<br>
+                  Total: {{ site.pluginEntries.length }}<br>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item>
+                <v-list-item-icon>
+                  <PagesSitesIssueIconForField fieldName="cms_version_status" :site="site"></PagesSitesIssueIconForField>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  CMS
+                </v-list-item-content>
+                <v-list-item-content class="align-end">
+                  {{ site.cms }}<br>
+                  {{ site.cms_version }}<br>
+                  {{ site.cms_version_status }}
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item>
+                <v-list-item-icon>
+                  <PagesSitesIssueIconForField fieldName="upstream_status" :site="site"></PagesSitesIssueIconForField>
+                </v-list-item-icon>
+                <v-list-item-content>Upstream</v-list-item-content>
+                <v-list-item-content class="align-end">
+                  {{ site.upstream_status }}
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item>
+                <v-list-item-icon>
+                  <PagesSitesIssueIconForField fieldName="php_version_status" :site="site"></PagesSitesIssueIconForField>
+                </v-list-item-icon>
+                <v-list-item-content>PHP</v-list-item-content>
+                <v-list-item-content class="align-end">
+                  {{ site.php_version }}<br>
+                  {{ site.php_version_status }}
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item>
+                <v-list-item-icon>
+                  <PagesSitesIssueIconForField fieldName="new_relic_status" :site="site"></PagesSitesIssueIconForField>
+                </v-list-item-icon>
+                <v-list-item-content>New Relic</v-list-item-content>
+                <v-list-item-content class="align-end">
+                  {{ site.new_relic_status }}
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialog = false">
+              Close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
+
+
   </v-card>
 </template>
 
@@ -117,7 +136,8 @@ export default {
   ],
   data() {
     return {
-      expanded: [],
+      dialog: false,
+      site: null,
       headers: [
         {
           text: "Site",
@@ -147,6 +167,11 @@ export default {
           break;
       }
     },
+    rowClicked(site) {
+      console.info(event);
+      this.dialog = !this.dialog;
+      this.site = site;
+    }
   }
 }
 </script>
@@ -154,5 +179,11 @@ export default {
 <style scoped>
 .v-list-item__icon {
   align-self: auto;
+}
+</style>
+
+<style>
+.sites-modal-table tbody td {
+  cursor: pointer;
 }
 </style>
