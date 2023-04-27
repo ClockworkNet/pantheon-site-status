@@ -2,8 +2,6 @@
 .dart_tool/
 .packages
 
-data/
-
 # Conventional directory for build outputs
 build/
 
