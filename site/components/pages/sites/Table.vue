@@ -6,8 +6,8 @@
       :search="search"
       :multi-sort="false"
       item-key="name"
-      items-per-page=10
-      fixed-header=true
+      :items-per-page="10"
+      :fixed-header="true"
       v-on:click:row="rowClicked"
       sort-by="issuePriority"
       item-class="site-row"
@@ -42,10 +42,12 @@
     <div class="text-center">
       <v-dialog
         v-model="dialog"
+        :overlay-opacity=".95"
+        overlay-color="#333"
         width="500">
 
         <v-card v-if="!!site">
-          <v-card-title class="text-h5">
+          <v-card-title class="text-h5 accent black--text">
             {{ site.name }}
           </v-card-title>
 

@@ -69,7 +69,7 @@ export default {
         },
         {
           icon: "mdi-puzzle",
-          title: "Plugins",
+          title: "Plugin Use",
           to: "/plugins",
         },
         {
