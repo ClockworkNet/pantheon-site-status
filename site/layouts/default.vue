@@ -34,12 +34,9 @@
       </v-layout>
     </v-navigation-drawer>
     <v-main>
-      <v-container>
+      <v-container class="flex-grow-1">
         <nuxt />
       </v-container>
-      <v-footer>
-        <span>&copy; {{ new Date().getFullYear() }} Clockwork</span>
-      </v-footer>
     </v-main>
     <!-- <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
@@ -51,6 +48,9 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer> -->
+    <v-footer class="justify-end">
+        &copy; {{ new Date().getFullYear() }} Clockwork
+    </v-footer>
   </v-app>
 </template>
 

@@ -6,7 +6,7 @@
       :search="search"
       :multi-sort="false"
       item-key="name"
-      :items-per-page="10"
+      :items-per-page="20"
       :fixed-header="true"
       v-on:click:row="rowClicked"
       sort-by="issuePriority"
@@ -47,7 +47,7 @@
         width="500">
 
         <v-card v-if="!!site">
-          <v-card-title class="text-h5 accent black--text">
+          <v-card-title class="text-h5">
             {{ site.name }}
           </v-card-title>
 

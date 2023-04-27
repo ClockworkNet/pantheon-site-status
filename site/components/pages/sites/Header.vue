@@ -1,7 +1,7 @@
 <template>
   <div class="search-row">
     <v-row>
-      <v-col cols="9">
+      <v-col cols="6">
         <h1>
           Sites
           <v-tooltip bottom>
@@ -14,13 +14,30 @@
       </v-col>
       <v-col cols="3">
         <v-text-field
-          v-model="value"
-          v-on="$listeners"
+          v-model="searchValue"
+          v-on:change="searchChange"
           append-icon="mdi-magnify"
           label="Search"
           single-line
           hide-details
         ></v-text-field>
+      </v-col>
+      <v-col cols="3">
+        <v-select
+          flat
+          hide-details
+          small
+          clearable
+          label="Team"
+          :items="tagOptions"
+          v-model="selectedTagsValue"
+        >
+          <template v-slot:selection="{ item, index }">
+            <span v-if="index === 0" class="grey--text">
+              {{ item.value }}
+            </span>
+          </template>
+        </v-select>
       </v-col>
     </v-row>
     </div>
@@ -28,17 +45,42 @@
 
 <script>
 export default {
-  props: ['search'],
-  emits: ['update:search'],
+  props: [
+    'search',
+    'selectedTags'
+  ],
+  emits: [
+    'update:search',
+    'update:selectedTags'
+  ],
+  methods: {
+    searchChange(newValue) { console.info(newValue), this.searchValue = newValue },
+  },
   computed: {
-    value: {
+    searchValue: {
       get() {
         return this.search
       },
       set(value) {
         this.$emit('update:search', value)
       }
-    }
+    },
+    selectedTagsValue: {
+      get() {
+        return this.selectedTags
+      },
+      set(value) {
+        console.info(value);
+        this.$emit('update:selectedTags', value)
+      }
+    },
+    tags() { return this.$store.getters['sites/tags'] },
+    tagOptions() { return this.tags.map((tagSlug) => {
+      return {
+        text: tagSlug.split(/[-_ ]/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' '),
+        value: tagSlug
+      }
+    }) }
   }
 }
 </script>

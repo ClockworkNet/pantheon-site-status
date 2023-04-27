@@ -1,18 +1,18 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col md="3" sm="6">
+  <v-row justify="center" align="start">
+    <v-col md="4" sm="6">
       <SiteSummaryCard param="cms" label="CMS" />
     </v-col>
-    <v-col md="3" sm="6">
+    <v-col md="4" sm="6">
       <SiteSummaryCard param="cms_version_status" label="CMS Stability" />
     </v-col>
-    <v-col md="3" sm="6">
+    <v-col md="4" sm="6">
       <SiteSummaryCard param="php_version" label="PHP Versions" />
     </v-col>
-    <v-col md="3" sm="6">
+    <v-col md="4" sm="6">
       <SiteSummaryCard param="upstream_status" label="Upstreams" />
     </v-col>
-    <v-col md="3" sm="6">
+    <v-col md="4" sm="6">
       <SiteSummaryCard param="new_relic_status" label="New Relic" />
     </v-col>
   </v-row>

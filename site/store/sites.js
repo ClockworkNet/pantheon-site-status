@@ -8,6 +8,8 @@ export const mutations = {
 }
 
 export const getters = {
+    tags: (state) =>
+      [...new Set(state.list.reduce((allTags, site) => allTags.concat(site.tags), []))],
     pluginToSiteMap: (state) => {
         let plugins = {};
         if (!state.list) return plugins;
