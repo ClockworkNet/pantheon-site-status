@@ -88,6 +88,7 @@ class SinfoManager {
     site.upstreamStatus = await pantheon.fetchUpstreamStatus(site.pantheonName);
     site.phpStability = evaluator.phpStability(site.phpVersion);
 
+    site.cmsStability = 'unknown';
     if (site.cmsName == 'wordpress') {
       site.cmsVersion = await pantheon.fetchWordPressVersion(site.pantheonName);
       site.cmsStability =
