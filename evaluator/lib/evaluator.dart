@@ -92,14 +92,14 @@ class Evaluator {
     }
 
     for (var plugin in site.plugins) {
-      if (plugin.vulnerableDescription != 'None') {
-        site.issues.add(SiteIssue(
-          severity: 'alert',
-          relatedField: 'plugin',
-          description: 'Vulnerable plugin: ${plugin.slug}',
-          referenceUrl: plugin.vulnerableDescription,
-        ));
-      }
+      if (plugin.vulnerableDescription == 'None') continue;
+
+      site.issues.add(SiteIssue(
+        severity: 'alert',
+        relatedField: 'plugin',
+        description: 'Vulnerable plugin: ${plugin.slug}',
+        referenceUrl: plugin.vulnerableDescription,
+      ));
     }
   }
 

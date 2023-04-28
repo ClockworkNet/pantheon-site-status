@@ -33,12 +33,12 @@ class WordPressPlugin extends Model {
       slug: Model.fieldAsString(json, 'slug'),
       installedVersion: Model.fieldAsString(json, 'installed'),
       availableVersion: Model.fieldAsString(json, 'available'),
-      needsUpdate: Model.fieldAsBool(json, 'needsUpdate'),
+      needsUpdate: Model.fieldAsBool(json, 'needs_update'),
       vulnerableDescription: Model.fieldAsString(json, 'vulnerable'),
     );
   }
 
-  /// Get a list of plugins from Panteon's plugin JSON.
+  /// Get a list of plugins from Pantheon's plugin JSON.
   static List<WordPressPlugin> pluginsFromJson(Map<String, dynamic> json) {
     if (json.isEmpty) return [];
     if (json.containsKey('plugins') != true) return [];

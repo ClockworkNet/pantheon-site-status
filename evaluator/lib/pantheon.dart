@@ -109,6 +109,7 @@ class Pantheon {
   }
 
   /// Get the information about the plugins for a WordPress site.
+  /// example: terminus wp -y jb-group.live -- launchcheck plugins --format=json
   Future<List<WordPressPlugin>> fetchWordPressPlugins(String siteName) {
     return Process.run('terminus', [
       'wp',
@@ -120,7 +121,11 @@ class Pantheon {
       '--format=json',
     ]).then((result) {
       if (result.exitCode == 1) return const [];
-      return WordPressPlugin.pluginsFromJson(json.decode(result.stdout));
+      try {
+        return WordPressPlugin.pluginsFromJson(json.decode(result.stdout));
+      } on FormatException {
+        return const [];
+      }
     });
   }
 }
