@@ -70,7 +70,7 @@
                 </v-list-item-content>
                 <v-list-item-content class="align-end">
                   Vulnerable: {{ site.pluginVulnerabilities.length }}<br>
-                  Upgrade: {{ site.pluginUpgrades.length }}<br>
+                  Upgrade Available: {{ site.pluginUpgrades.length }}<br>
                   Total: {{ site.pluginEntries.length }}<br>
                 </v-list-item-content>
               </v-list-item>

@@ -74,13 +74,15 @@ class Pantheon {
 
   /// Get the setup status of New Relic for the site.
   /// A properly configured site will the status "active".
+  /// example: terminus new-relic:info jb-group --field=state
   Future<String> fetchNewRelicStatus(String siteName) {
     return Process.run('terminus', [
       'new-relic:info',
       siteName,
       '--field=state',
     ]).then((result) {
-      return result.stdout.toString().trim();
+      final status = result.stdout.toString().trim();
+      return status.isEmpty ? 'unknown' : status;
     });
   }
 

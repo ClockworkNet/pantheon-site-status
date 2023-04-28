@@ -28,6 +28,7 @@ class Evaluator {
   final newRelicAlerts = {
     'active': 'okay',
     'pending': 'warning',
+    'unknown': 'warning',
   };
 
   /// Mapping of Pantheon Upstream status values to their alert level.

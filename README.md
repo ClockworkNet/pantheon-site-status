@@ -22,8 +22,10 @@ The evaluator is a Dart script. The script performs these high-level actions:
 
 ### Running the Evaluator from the Command Line
 
+This example can be used to update the json file expected by the Vue app.
+
 ```zsh
-dart ./evaluator/bin/main.dart
+dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
 ```
 
 ### Local Dev Prerequisites
