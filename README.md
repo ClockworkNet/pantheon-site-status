@@ -39,6 +39,29 @@ cd evaluator
 dart test
 ```
 
+## Playbooks
+
+### Updating Supported PHP Versions
+
+1. Open this file `evaluator/lib/evaluator.dart`
+2. Edit the contents of the variable `_phpVersions`
+
+### Updating Pantheon with New Data
+
+```zsh
+dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
+cd site
+npm run build
+npm run generate
+rm -rf path-to-pantheon-repo/sinfo/_nuxt
+cp -r dist/* path-to-pantheon-repo/sinfo
+cd path-to-pantheon-repo/sinfo
+git add .
+git push
+```
+
+## In Progress Work -- Items not done yet
+
 ### Buildchain
 
 A Docker container is used to implement the buildchain. Helper bin scripts have been provided for actions with the build chain.
@@ -55,13 +78,6 @@ A Docker container is used to implement the buildchain. Helper bin scripts have 
 ./bin/shell.sh
 ```
 
-### TO DO
+#### TO DO
 
 - Figure out how to authorize terminus within the buildchain
-
-## Change Cases
-
-### Updating Supported PHP Versions
-
-1. Open this file `evaluator/lib/evaluator.dart`
-2. Edit the contents of the variable `_phpVersions`
