@@ -111,9 +111,7 @@ export default {
           ? pluginEntries.filter((plugin) => plugin.needs_update !== "0")
           : [];
         newSite.pluginVulnerabilities = site.plugins
-          ? pluginEntries.filter((plugin) => {
-              return plugin.vulnerable !== "None";
-            })
+          ? pluginEntries.filter((plugin) => plugin.vulnerable !== "None")
           : [];
         newSite.pluginDisplay = `${newSite.pluginVulnerabilities.length} / ${newSite.pluginUpgrades.length} / ${pluginEntries.length}`;
         newSite.issueCount = site.issues.length;
