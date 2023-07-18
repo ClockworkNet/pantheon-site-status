@@ -24,6 +24,9 @@ jobs:
       - name: Authenticate with Pantheon
         run: |
           terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
+
+      - name: Checkout Pantheon repo
+        run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
       
       - name: Install Dart
         run: |
@@ -46,8 +49,13 @@ jobs:
           name: sites-json
           path: ./site/data/sites.json
 
-      - name: Checkout Pantheon repo
-        run: git clone ${{ env.PANTHEON_REPO }} pantheon-code
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+         key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
+
+      # - name: Checkout Pantheon repo
+      #   run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
 
       - name: Build and Generate
         run: |
