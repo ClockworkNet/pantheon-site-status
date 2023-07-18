@@ -35,8 +35,6 @@ jobs:
       - name: Checkout Pantheon repo
         run: |
           git clone ${{ vars.PANTHEON_REPO }} pantheon-code
-          ls -lha
-          ls -lha pantheon-code
       
       - name: Install Dart
         run: |
@@ -58,7 +56,7 @@ jobs:
           npm install
           npm run build
           npm run generate
-          rm -rf ../pantheon-code/sinfo/_nuxt
+          rm -rf ../pantheon-code/_nuxt
           cp -r dist/* ../pantheon-code/sinfo
           cd ../pantheon-code/sinfo
           git status
