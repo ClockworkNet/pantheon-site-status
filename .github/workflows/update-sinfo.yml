@@ -29,6 +29,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
            key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
+           known_hosts: ${{ vars.KNOWN_HOSTS }}
 
       - name: Checkout Pantheon repo
         run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
