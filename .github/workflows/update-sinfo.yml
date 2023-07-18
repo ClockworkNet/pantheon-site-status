@@ -57,9 +57,10 @@ jobs:
           npm run build
           npm run generate
           rm -rf ../pantheon-code/_nuxt
+          mkdir ../pantheon-code/sinfo
           cp -r dist/* ../pantheon-code/sinfo
           cd ../pantheon-code/sinfo
           git status
-          # git add .
-          # git commit -m "Update sinfo site"
+          # git add --all .
+          # git commit --allow-empty -m "Update sinfo site"
           # git push
