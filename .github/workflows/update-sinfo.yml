@@ -29,6 +29,8 @@ jobs:
         run: |
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}'
+          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+          ssh-keyscan ${{ vars.KNOWN_HOSTS }} >> ~/.ssh/known_hosts
 
       - name: Checkout Pantheon repo
         run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
