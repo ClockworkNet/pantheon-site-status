@@ -32,15 +32,6 @@ jobs:
           name: id_rsa
           known_hosts: ${{ vars.KNOWN_HOSTS }}
 
-      # - name: Install SSH Key
-      #   run: |
-      #     mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
-      #     ssh-keyscan ${{ vars.KNOWN_HOSTS }} >> ~/.ssh/known_hosts
-      #     cat ~/.ssh/known_hosts
-      #     eval $(ssh-agent)
-      #     ssh-add - <<< "${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}"
-      #     ls -lha ~/.ssh
-
       - name: Checkout Pantheon repo
         run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
       
@@ -57,21 +48,12 @@ jobs:
         run: |
           dart pub get --directory=evaluator 
           dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
-          cat site/data/sites.json
 
-      - name: Save sites.json artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: sites-json
-          path: ./site/data/sites.json
-
-      # - name: Install SSH Key
-      #   uses: shimataro/ssh-key-action@v2
+      # - name: Save sites.json artifact
+      #   uses: actions/upload-artifact@v2
       #   with:
-      #    key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
-
-      # - name: Checkout Pantheon repo
-      #   run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
+      #     name: sites-json
+      #     path: ./site/data/sites.json
 
       - name: Build and Generate
         run: |
