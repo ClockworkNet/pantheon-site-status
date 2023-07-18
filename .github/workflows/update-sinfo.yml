@@ -21,21 +21,6 @@ jobs:
           chmod +x terminus.phar
           sudo mv terminus.phar /usr/local/bin/terminus
 
-      - name: Build and Deploy
-        run: |
-          cd site
-          node -v
-          npm install
-          npm run build
-          npm run generate
-          rm -rf ../pantheon-code/sinfo/_nuxt
-          cp -r dist/* ../pantheon-code/sinfo
-          cd ../pantheon-code/sinfo
-          git status
-          # git add .
-          # git commit -m "Update sinfo site"
-          # git push
-
       - name: Authenticate with Pantheon
         run: |
           terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
@@ -63,12 +48,6 @@ jobs:
         run: |
           dart pub get --directory=evaluator 
           dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
-
-      # - name: Save sites.json artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: sites-json
-      #     path: ./site/data/sites.json
 
       - name: Build and Deploy
         run: |
