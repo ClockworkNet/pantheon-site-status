@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Terminus
         run: |
@@ -25,14 +25,13 @@ jobs:
         run: |
           terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-           key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
-           known_hosts: ${{ vars.KNOWN_HOSTS }}
-
       - name: Checkout Pantheon repo
-        run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
+        uses: actions/checkout@v3  
+        with:
+          repository: ${{ vars.PANTHEON_REPO }}
+          path: 'pantheon-code'
+          ssh-key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
+          ssh-known-hosts: ${{ vars.KNOWN_HOSTS }}
       
       - name: Install Dart
         run: |
