@@ -25,14 +25,21 @@ jobs:
         run: |
           terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
 
-      - name: Install SSH Key
-        run: |
-          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
-          ssh-keyscan ${{ vars.KNOWN_HOSTS }} >> ~/.ssh/known_hosts
-          cat ~/.ssh/known_hosts
-          eval $(ssh-agent)
-          ssh-add - <<< "${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}"
-          ls -lha ~/.ssh
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ vars.KNOWN_HOSTS }}
+
+      # - name: Install SSH Key
+      #   run: |
+      #     mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+      #     ssh-keyscan ${{ vars.KNOWN_HOSTS }} >> ~/.ssh/known_hosts
+      #     cat ~/.ssh/known_hosts
+      #     eval $(ssh-agent)
+      #     ssh-add - <<< "${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}"
+      #     ls -lha ~/.ssh
 
       - name: Checkout Pantheon repo
         run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
