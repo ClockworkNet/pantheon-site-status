@@ -1,0 +1,62 @@
+name: Update sinfo site
+on:
+  push:
+    branches:
+      - main
+      - feat/pipeline
+  schedule:
+    - cron: "0 6 * * 1" # Runs at 6 AM on Mondays
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Terminus
+        run: |
+          wget https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar
+          chmod +x terminus.phar
+          sudo mv terminus.phar /usr/local/bin/terminus
+
+      - name: Authenticate with Pantheon
+        run: |
+          terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
+      
+      - name: Install Dart
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apt-transport-https
+          sudo sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+          sudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+          sudo apt-get update
+          sudo apt-get install -y dart
+
+      - name: Run Dart Evaluator
+        run: | 
+          dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
+          cat site/data/sites.json
+
+      - name: Save sites.json artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sites-json
+          path: ./site/data/sites.json
+
+      - name: Checkout Pantheon repo
+        run: git clone ${{ env.PANTHEON_REPO }} pantheon-code
+
+      - name: Build and Generate
+        run: |
+          cd site
+          npm run build
+          npm run generate
+          rm -rf ../pantheon-code/sinfo/_nuxt
+          cp -r dist/* ../pantheon-code/sinfo
+          cd ../pantheon-code/sinfo
+          git status
+          # git add .
+          # git commit -m "Update sinfo site"
+          # git push

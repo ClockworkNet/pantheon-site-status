@@ -25,6 +25,8 @@ The evaluator is a Dart script. The script performs these high-level actions:
 This example can be used to update the json file expected by the Vue app.
 
 ```zsh
+terminus auth:login --email=username@clockwork.com
+
 dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
 ```
 
