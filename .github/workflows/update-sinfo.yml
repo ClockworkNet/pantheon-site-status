@@ -33,7 +33,10 @@ jobs:
           known_hosts: ${{ vars.KNOWN_HOSTS }}
 
       - name: Checkout Pantheon repo
-        run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
+        run: |
+          git clone ${{ vars.PANTHEON_REPO }} pantheon-code
+          ls -lha
+          ls -lha pantheon-code
       
       - name: Install Dart
         run: |
