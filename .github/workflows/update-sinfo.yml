@@ -25,6 +25,11 @@ jobs:
         run: |
           terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
 
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+           key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
+
       - name: Checkout Pantheon repo
         run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
       
@@ -49,10 +54,10 @@ jobs:
           name: sites-json
           path: ./site/data/sites.json
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-         key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
+      # - name: Install SSH Key
+      #   uses: shimataro/ssh-key-action@v2
+      #   with:
+      #    key: ${{ secrets.PANTHEON_PRIVATE_SSH_KEY }}
 
       # - name: Checkout Pantheon repo
       #   run: git clone ${{ vars.PANTHEON_REPO }} pantheon-code
