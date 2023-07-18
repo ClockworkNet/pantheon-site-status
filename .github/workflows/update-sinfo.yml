@@ -35,7 +35,8 @@ jobs:
           sudo apt-get install -y dart
 
       - name: Run Dart Evaluator
-        run: | 
+        run: |
+          dart pub get --directory=evaluator 
           dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
           cat site/data/sites.json
 
