@@ -26,7 +26,7 @@ This example can be used to update the json file expected by the Vue app.
 
 ```zsh
 terminus auth:login --email=username@clockwork.com
-
+dart pub get --directory=evaluator
 dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
 ```
 
@@ -48,18 +48,14 @@ dart test
 1. Open this file `evaluator/lib/evaluator.dart`
 2. Edit the contents of the variable `_phpVersions`
 
-### Updating Pantheon with New Data
+### Updating S3 bucket with New Data
 
 ```zsh
 dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
 cd site
 npm run build
 npm run generate
-rm -rf path-to-pantheon-repo/sinfo/_nuxt
-cp -r dist/* path-to-pantheon-repo/sinfo
-cd path-to-pantheon-repo/sinfo
-git add .
-git push
+aws s3 sync ./dist/ ${{ vars.AWS_S3_BUCKET }} --delete --acl public-read
 ```
 
 ## In Progress Work -- Items not done yet
