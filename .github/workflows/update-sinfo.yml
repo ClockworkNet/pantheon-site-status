@@ -5,6 +5,7 @@ on:
       - main
   schedule:
     - cron: "0 6 * * 1" # Runs at 6 AM on Mondays
+  workflow_dispatch: # Manual trigger
 
 jobs:
   build:
@@ -37,6 +38,12 @@ jobs:
         run: |
           dart pub get --directory=evaluator 
           dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sites-json
+          path: ./site/data/sites.json
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
