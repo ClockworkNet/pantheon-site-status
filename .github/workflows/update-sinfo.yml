@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - fix/wrong-counts-displayed
   schedule:
     - cron: "0 6 * * 1" # Runs at 6 AM on Mondays
   workflow_dispatch: # Manual trigger
