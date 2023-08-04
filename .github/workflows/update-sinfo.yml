@@ -5,7 +5,7 @@ on:
       - main
       - fix/wrong-counts-displayed
   schedule:
-    - cron: "0 6 * * 1" # Runs at 6 AM on Mondays
+    - cron: "0 6 * * 1" # Runs at 6 AM GMT on Mondays
   workflow_dispatch: # Manual trigger
 
 jobs:
@@ -23,18 +23,9 @@ jobs:
           known_hosts: unnecessary
 
       - name: Install Terminus
-        run: |
-          wget https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar
-          chmod +x terminus.phar
-          sudo mv terminus.phar /usr/local/bin/terminus
-
-      - name: Authenticate with Pantheon
-        run: |
-          terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
-
-      - name: Test terminus
-        run: |
-          terminus wp -y hob-main.live -- launchcheck plugins --format=json
+        uses: pantheon-systems/terminus-github-actions@main
+        with:
+          pantheon-machine-token: ${{ secrets.PANTHEON_MACHINE_TOKEN }}
       
       - name: Install Dart
         run: |
