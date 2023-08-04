@@ -126,6 +126,7 @@ class Pantheon {
       try {
         return WordPressPlugin.pluginsFromJson(json.decode(result.stdout));
       } on FormatException {
+        print(result.stdout.toString().trim());
         return const [];
       }
     });
