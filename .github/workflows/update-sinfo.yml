@@ -4,7 +4,8 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 6 * * 1" # Runs at 6 AM on Mondays
+    - cron: "0 6 * * 1" # Runs at 6 AM GMT on Mondays
+  workflow_dispatch: # Manual trigger
 
 jobs:
   build:
@@ -14,15 +15,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Terminus
-        run: |
-          wget https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar
-          chmod +x terminus.phar
-          sudo mv terminus.phar /usr/local/bin/terminus
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: unnecessary
 
-      - name: Authenticate with Pantheon
-        run: |
-          terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
+      - name: Install Terminus
+        uses: pantheon-systems/terminus-github-actions@main
+        with:
+          pantheon-machine-token: ${{ secrets.PANTHEON_MACHINE_TOKEN }}
       
       - name: Install Dart
         run: |
@@ -37,6 +39,12 @@ jobs:
         run: |
           dart pub get --directory=evaluator 
           dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sites-json
+          path: ./site/data/sites.json
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
