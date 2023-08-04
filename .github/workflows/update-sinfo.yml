@@ -25,6 +25,10 @@ jobs:
       - name: Authenticate with Pantheon
         run: |
           terminus auth:login --machine-token ${{ secrets.PANTHEON_MACHINE_TOKEN }}
+
+      - name: Test terminus
+        run: |
+          terminus wp -y hob-main.live -- launchcheck plugins --format=json
       
       - name: Install Dart
         run: |
