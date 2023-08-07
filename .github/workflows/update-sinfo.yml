@@ -4,7 +4,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 6 * * 1" # Runs at 6 AM GMT on Mondays
+    - cron: "0 6 * * *" # Runs at 6 AM GMT everyday
   workflow_dispatch: # Manual trigger
 
 jobs:
