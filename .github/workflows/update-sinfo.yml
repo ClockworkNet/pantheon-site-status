@@ -41,7 +41,7 @@ jobs:
           dart ./evaluator/bin/main.dart --results-file=./site/data/sites.json
 
       - name: Save artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sites-json
           path: ./site/data/sites.json
