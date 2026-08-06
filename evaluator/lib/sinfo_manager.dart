@@ -22,6 +22,11 @@ class SinfoManager {
   /// Used to access data in Pantheon.
   Pantheon pantheon;
 
+  /// Used to access general WordPress.org data. Shared across all sites
+  /// in a run so its internal version-stability cache is only ever
+  /// populated by one network fetch, not one per site.
+  final WordPress wordPress = WordPress();
+
   /// Default constructor.
   SinfoManager({this.pantheonOrgId = '', this.resultsPath = ''})
       : pantheon = Pantheon(pantheonOrgId: pantheonOrgId);
@@ -51,6 +56,10 @@ class SinfoManager {
     });
   }
 
+  /// Number of sites to enrich concurrently. Kept conservative to stay
+  /// well within Terminus/Pantheon API rate limits.
+  static const _enrichmentConcurrency = 5;
+
   /// Process of list of sites from Pantheon and gather
   /// addional data for each site that is not frozen.
   Future<List<Site>> _enrichSites(List<Site> sites) async {
@@ -63,7 +72,7 @@ class SinfoManager {
     var completed = 0;
     var enrichedSites = <Site>[];
 
-    for (var site in sites) {
+    Future<void> processSite(Site site) async {
       if (site.isActive) {
         await _enrichSite(site);
         Evaluator().evaluateSite(site);
@@ -73,6 +82,13 @@ class SinfoManager {
       progress.update(completed);
     }
 
+    for (var batchStart = 0;
+        batchStart < sites.length;
+        batchStart += _enrichmentConcurrency) {
+      final batch = sites.skip(batchStart).take(_enrichmentConcurrency);
+      await Future.wait(batch.map(processSite));
+    }
+
     print('\nEnriched sites: ${enrichedSites.length}');
     return enrichedSites;
   }
@@ -80,7 +96,6 @@ class SinfoManager {
   /// Enrich a site with data from around the world.
   Future<Site> _enrichSite(Site site) async {
     final evaluator = Evaluator();
-    final wordPress = WordPress();
 
     site.phpVersion = await pantheon.fetchPhpVersion(site.pantheonName);
     site.liveUrl = await pantheon.fetchLiveUrl(site.pantheonName);
