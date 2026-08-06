@@ -108,5 +108,15 @@ class Evaluator {
   }
 
   /// Evaluate a Drupal site and record issues in [site].
-  void _evaluateDrupal(Site site) {}
+  ///
+  /// Drupal-specific checks (module versions, vulnerabilities, etc.) aren't
+  /// implemented yet. Record that explicitly so the dashboard shows "not
+  /// evaluated" rather than implying a clean bill of health.
+  void _evaluateDrupal(Site site) {
+    site.issues.add(const SiteIssue(
+      severity: 'warning',
+      relatedField: 'cms_version_status',
+      description: 'Drupal sites are not yet evaluated for issues',
+    ));
+  }
 }

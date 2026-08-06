@@ -24,7 +24,7 @@ class Pantheon {
     return true;
   }
 
-  /// Get the list of all sites from Pantheon, trying the cache first.
+  /// Get the list of all sites from Pantheon.
   Future<Map<dynamic, dynamic>> fetchSitesJson() async {
     return Process.run('terminus', [
       'org:site:list',
@@ -36,8 +36,23 @@ class Pantheon {
     });
   }
 
-  /// Get a list of the non-frozen, non-sandbox sites from Pantheon,
-  /// if there is cached data, it will be used.
+  /// Run a terminus command for [siteName] and log a warning to stderr if
+  /// it exits non-zero. Returns the trimmed stdout either way (empty on
+  /// failure), so callers get the same "blank" value they always did, but
+  /// the failure itself is no longer silent.
+  Future<String> _runTerminus(List<String> args, String siteName) {
+    return Process.run('terminus', args).then((result) {
+      final output = result.stdout.toString().trim();
+      if (result.exitCode != 0) {
+        stderr.writeln(
+            'Warning: `terminus ${args.join(' ')}` failed for $siteName '
+            '(exit code ${result.exitCode}). stderr:\n${result.stderr.toString().trim()}');
+      }
+      return output;
+    });
+  }
+
+  /// Get a list of the non-frozen, non-sandbox sites from Pantheon.
   Future<List<Site>> fetchSites() {
     var sites = <Site>[];
 
@@ -52,62 +67,34 @@ class Pantheon {
 
   /// Get the PHP version used for the live environment of a site.
   Future<String> fetchPhpVersion(String siteName) {
-    return Process.run('terminus', [
-      'env:info',
-      '$siteName.live',
-      '--field=php_version',
-    ]).then((result) {
-      return result.stdout.toString().trim();
-    });
+    return _runTerminus(
+        ['env:info', '$siteName.live', '--field=php_version'], siteName);
   }
 
   /// Get the URL to the live instance of the site.
   Future<String> fetchLiveUrl(String siteName) {
-    return Process.run('terminus', [
-      'env:view',
-      '$siteName.live',
-      '--print',
-    ]).then((result) {
-      return result.stdout.toString().trim();
-    });
+    return _runTerminus(['env:view', '$siteName.live', '--print'], siteName);
   }
 
   /// Get the setup status of New Relic for the site.
   /// A properly configured site will the status "active".
   /// example: terminus new-relic:info jb-group --field=state
   Future<String> fetchNewRelicStatus(String siteName) {
-    return Process.run('terminus', [
-      'new-relic:info',
-      siteName,
-      '--field=state',
-    ]).then((result) {
-      final status = result.stdout.toString().trim();
-      return status.isEmpty ? 'unknown' : status;
-    });
+    return _runTerminus(['new-relic:info', siteName, '--field=state'],
+            siteName)
+        .then((status) => status.isEmpty ? 'unknown' : status);
   }
 
   /// Get Pantheon's associated upstream status for the site.
   Future<String> fetchUpstreamStatus(String siteName) {
-    return Process.run('terminus', [
-      'upstream:updates:status',
-      '$siteName.live',
-    ]).then((result) {
-      return result.stdout.toString().trim();
-    });
+    return _runTerminus(
+        ['upstream:updates:status', '$siteName.live'], siteName);
   }
 
   /// Get the WordPress CMS version for the site.
   Future<String> fetchWordPressVersion(String siteName) {
-    return Process.run('terminus', [
-      'wp',
-      '-y',
-      '$siteName.live',
-      '--',
-      'core',
-      'version',
-    ]).then((result) {
-      return result.stdout.toString().trim();
-    });
+    return _runTerminus(
+        ['wp', '-y', '$siteName.live', '--', 'core', 'version'], siteName);
   }
 
   /// Get the information about the plugins for a WordPress site.
@@ -122,7 +109,12 @@ class Pantheon {
       'plugins',
       '--format=json',
     ]).then((result) {
-      if (result.exitCode == 1) return const [];
+      if (result.exitCode == 1) {
+        stderr.writeln(
+            'Warning: `terminus wp launchcheck plugins` failed for $siteName '
+            '(exit code 1). stderr:\n${result.stderr.toString().trim()}');
+        return const [];
+      }
 
       final output = result.stdout.toString();
       final jsonPayload = _extractJsonObject(output);
