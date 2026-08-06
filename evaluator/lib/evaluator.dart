@@ -93,7 +93,10 @@ class Evaluator {
     }
 
     for (var plugin in site.plugins) {
-      if (plugin.vulnerableDescription == 'None') continue;
+      if (plugin.vulnerableDescription.isEmpty ||
+          plugin.vulnerableDescription == 'None') {
+        continue;
+      }
 
       site.issues.add(SiteIssue(
         severity: 'alert',
