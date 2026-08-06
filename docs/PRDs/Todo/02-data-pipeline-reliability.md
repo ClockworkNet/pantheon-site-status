@@ -1,6 +1,6 @@
 # PRD 02 — Data Pipeline Reliability
 
-**Status:** Todo
+**Status:** Todo — R1 partially done (see note below)
 **Priority:** P1
 **Depends on:** PRD 01 (fix the bugs before hardening the pipeline around them)
 **Source:** [docs/RECOMMENDATIONS.md](../../RECOMMENDATIONS.md) §1 items 3-5
@@ -34,6 +34,11 @@ The evaluator trusts Terminus CLI output unconditionally in almost every fetch m
 ### R3 — Stop silently no-op'ing Drupal sites
 - Make `_evaluateDrupal` in [evaluator/lib/evaluator.dart](../../../evaluator/lib/evaluator.dart) add an explicit "not evaluated" issue/flag for Drupal sites, so the dashboard visibly distinguishes "checked, no issues" from "not checked."
 - Full Drupal module/version evaluation logic is explicitly out of scope for this PRD; only the "don't lie about coverage" part is in scope.
+
+## What's done
+
+- **`fetchWordPressPlugins` JSON parsing hardened** (part of R1, found live during a real evaluator run): `wp launchcheck plugins --format=json` can emit PHP warnings (e.g., a theme failing to write cache files with `file_put_contents(...): Permission denied`) that land ahead of the JSON payload on the same stream, breaking naive `json.decode`. Previously this silently returned an empty plugin list for the affected site with no visible trace. Fixed in [evaluator/lib/pantheon.dart](../../../evaluator/lib/pantheon.dart): a new `_extractJsonObject` helper pulls just the `{...}` object out of the raw output before decoding, and a genuine parse failure now logs the site name + raw output to stderr instead of failing silently. Verified against the real garbled output captured from a live run. `dart analyze` passes; `dart test` could not be run in this environment due to an unrelated local Dart SDK installation issue (missing `frontend_server.dart.snapshot`), not caused by this change.
+- The rest of R1 (checking `exitCode` on every other `Process.run('terminus', ...)` call) is still open — this fix only covers the plugin-fetch path where the bug was actually observed.
 
 ## Acceptance Criteria
 
