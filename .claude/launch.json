@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pantheon-site-status",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd site && NODE_OPTIONS=--openssl-legacy-provider yarn dev"],
+      "port": 3000
+    }
+  ]
+}

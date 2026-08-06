@@ -1,6 +1,6 @@
 # PRD 01 — Correctness & Public-Exposure Fixes
 
-**Status:** Todo
+**Status:** In progress — R1/R2 code-complete on branch `fix/prd-01-correctness-and-exposure`, R3 blocked on an access-control decision (see note below)
 **Priority:** P0 — do this iteration first, independent of everything else
 **Depends on:** nothing
 **Source:** [docs/RECOMMENDATIONS.md](../../RECOMMENDATIONS.md) §1 items 1-2, §3
@@ -41,11 +41,19 @@ Item 3 matters more once items 1-2 are fixed: right now the public dashboard is 
 
 ## Acceptance Criteria
 
-- [ ] For a WordPress site with at least one plugin whose `vulnerable` field is a real description (not `"None"`), the site detail modal shows exactly that plugin under "Vulnerable," and no others.
-- [ ] For a WordPress site where every plugin's `vulnerable` field is `"None"`, the modal shows 0 vulnerable plugins.
-- [ ] The Plugins page shows one row per distinct plugin slug across the whole org, with a Sites count matching a manual count from `sites.json`.
-- [ ] Attempting to load the dashboard's public URL unauthenticated (fresh incognito session, no VPN/SSO) fails or is blocked.
-- [ ] A follow-up daily pipeline run completes and the redeployed site still enforces the same access control (i.e., the S3 sync step doesn't silently re-apply `public-read`).
+- [x] For a WordPress site with at least one plugin whose `vulnerable` field is a real description (not `"None"`), the site detail modal shows exactly that plugin under "Vulnerable," and no others. *(Verified with a synthetic-data check; grep confirmed `sites.vue:114` was the only place comparing against `""` — see "What's done" below.)*
+- [x] For a WordPress site where every plugin's `vulnerable` field is `"None"`, the modal shows 0 vulnerable plugins. *(Same fix/verification as above.)*
+- [x] The Plugins page shows one row per distinct plugin slug across the whole org, with a Sites count matching a manual count from `sites.json`. *(Verified with synthetic data: two different plugins at the same array index across two sites now produce two separate slug-keyed entries instead of colliding.)*
+- [ ] Attempting to load the dashboard's public URL unauthenticated (fresh incognito session, no VPN/SSO) fails or is blocked. — **not started**, needs the R3 decision below.
+- [ ] A follow-up daily pipeline run completes and the redeployed site still enforces the same access control. — **not started**, depends on the above.
+
+## What's done / what's blocked
+
+- **R1 (vulnerable-plugin filter):** fixed in `site/pages/sites.vue` — now compares against `"None"`. Grep confirmed this was the only spot in the codebase with the bug; the evaluator's own Dart logic was already correct.
+- **R2 (plugin aggregation keys):** fixed in `site/store/sites.js` — `pluginToSiteMap` now keys on `plugin.slug` instead of the `Object.entries` array index, and iterates `site.plugins` directly.
+- Both fixes verified against synthetic data reproducing the original failure conditions (a plugin flagged vulnerable when it shouldn't be; two distinct plugins colliding under the same map key). No `site/data/sites.json` sample exists in this repo/environment to verify against real production data — that verification should happen on the next real evaluator run before merging.
+- No automated test coverage exists yet for either fix — that's PRD 04's job; this PRD's changes are a good candidate for the first tests written there.
+- **R3 is not started.** It requires an access-control decision (CloudFront signed URLs/cookies, IP allowlist, SSO, or moving off public S3) and changes to AWS infrastructure that live outside this repo (no Terraform/CloudFormation found here — bucket/distribution config is presumably managed directly in AWS). That decision and the AWS-side changes need a human with the relevant access; I can update `.github/workflows/update-sinfo.yml`'s S3 sync step once a mechanism is chosen, but can't choose or provision the mechanism itself.
 
 ## Out of scope / follow-up
 
