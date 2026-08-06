@@ -11,6 +11,11 @@ class WordPress {
   /// Map of versions of WordPress and their stability level.
   Map<String, String> _versions = const {};
 
+  /// The in-flight request for [_versions], if one is already underway.
+  /// Lets concurrent callers share a single fetch instead of each kicking
+  /// off their own request before the first one has populated [_versions].
+  Future<Map<String, String>>? _versionsRequest;
+
   /// Get the current stable version of WordPress.
   Future<String> fetchCurrentVersion() {
     if (_currentVersion.isNotEmpty) return Future(() => _currentVersion);
@@ -36,12 +41,14 @@ class WordPress {
       return Future(() => _stability(version));
     }
 
-    var url = Uri.https('api.wordpress.org', '/core/stable-check/1.0/');
+    _versionsRequest ??= () {
+      var url = Uri.https('api.wordpress.org', '/core/stable-check/1.0/');
+      return http.get(url).then((response) {
+        final Map<String, dynamic> json = jsonDecode(response.body);
+        return _versions = Map<String, String>.from(json);
+      });
+    }();
 
-    return http.get(url).then((response) {
-      final Map<String, dynamic> json = jsonDecode(response.body);
-      _versions = Map<String, String>.from(json);
-      return _stability(version);
-    });
+    return _versionsRequest!.then((_) => _stability(version));
   }
 }
