@@ -13,11 +13,10 @@ export const getters = {
     pluginToSiteMap: (state) => {
         let plugins = {};
         if (!state.list) return plugins;
-        state.list.forEach((site, siteIndex) => {
+        state.list.forEach((site) => {
             if (!site.plugins) return;
-            Object.entries(site.plugins).forEach((entry, index) => {
-                const key = entry[0];
-                const plugin = entry[1];
+            site.plugins.forEach((plugin) => {
+                const key = plugin.slug;
                 if (!plugins[key]) plugins[key] = {
                     name: plugin.slug,
                     sites: [],

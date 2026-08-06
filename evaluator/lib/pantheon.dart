@@ -123,12 +123,32 @@ class Pantheon {
       '--format=json',
     ]).then((result) {
       if (result.exitCode == 1) return const [];
+
+      final output = result.stdout.toString();
+      final jsonPayload = _extractJsonObject(output);
+      if (jsonPayload == null) {
+        stderr.writeln(
+            'Warning: no JSON object found in `wp launchcheck plugins` output for $siteName. Raw output:\n${output.trim()}');
+        return const [];
+      }
+
       try {
-        return WordPressPlugin.pluginsFromJson(json.decode(result.stdout));
+        return WordPressPlugin.pluginsFromJson(json.decode(jsonPayload));
       } on FormatException {
-        print(result.stdout.toString().trim());
+        stderr.writeln(
+            'Warning: could not parse `wp launchcheck plugins` JSON for $siteName. Raw output:\n${output.trim()}');
         return const [];
       }
     });
+  }
+
+  /// Extract the outermost JSON object from [raw], tolerating any
+  /// non-JSON noise (e.g. PHP warnings written to the same stream) that
+  /// may precede or follow it. Returns null if no `{...}` object is found.
+  String? _extractJsonObject(String raw) {
+    final start = raw.indexOf('{');
+    final end = raw.lastIndexOf('}');
+    if (start == -1 || end == -1 || end < start) return null;
+    return raw.substring(start, end + 1);
   }
 }
