@@ -4,6 +4,10 @@ import 'models/site_issue.dart';
 /// Evaluate a site based on it's values and determine warnings / issues.
 class Evaluator {
   /// Map of PHP versions to their current status.
+  ///
+  /// Source of truth: https://www.php.net/supported-versions.php -- update
+  /// this whenever that page's statuses change (see the "Updating
+  /// Supported PHP Versions" playbook in the root README).
   final _phpVersions = {
     '5.5': 'end of life',
     '5.6': 'end of life',
@@ -12,9 +16,12 @@ class Evaluator {
     '7.2': 'end of life',
     '7.3': 'end of life',
     '7.4': 'end of life',
-    '8.0': 'security fixes only',
-    '8.1': 'active',
-    '8.2': 'active',
+    '8.0': 'end of life',
+    '8.1': 'end of life',
+    '8.2': 'security fixes only',
+    '8.3': 'security fixes only',
+    '8.4': 'active',
+    '8.5': 'active',
   };
 
   /// Mapping of PHP status values to their alert level.

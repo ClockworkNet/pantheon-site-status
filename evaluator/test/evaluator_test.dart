@@ -7,7 +7,7 @@ Site _wordpressSite({List<WordPressPlugin> plugins = const []}) {
   final site = Site(
     cmsName: 'wordpress',
     pantheonName: 'test-site',
-    phpVersion: '8.2',
+    phpVersion: '8.4',
     phpStability: 'active',
     newRelicStatus: 'active',
     upstreamStatus: 'current',
@@ -18,6 +18,33 @@ Site _wordpressSite({List<WordPressPlugin> plugins = const []}) {
 }
 
 void main() {
+  group('Evaluator.phpStability', () {
+    // Regression coverage: this map (evaluator.dart's _phpVersions) is
+    // manually maintained against https://www.php.net/supported-versions.php
+    // and had drifted stale before -- PHP 8.3 was missing entirely and
+    // fell through to the 'Unknown' fallback. These pin down the actual
+    // real-world statuses as of 2026-08-06 so the next drift is caught
+    // by a failing test instead of a user noticing a wrong badge.
+    test('currently-active versions are active', () {
+      expect(Evaluator().phpStability('8.4'), 'active');
+      expect(Evaluator().phpStability('8.5'), 'active');
+    });
+
+    test('security-only versions are security fixes only', () {
+      expect(Evaluator().phpStability('8.2'), 'security fixes only');
+      expect(Evaluator().phpStability('8.3'), 'security fixes only');
+    });
+
+    test('end-of-life versions are end of life', () {
+      expect(Evaluator().phpStability('8.1'), 'end of life');
+      expect(Evaluator().phpStability('7.4'), 'end of life');
+    });
+
+    test('an unrecognized version falls back to Unknown', () {
+      expect(Evaluator().phpStability('9.9'), 'Unknown');
+    });
+  });
+
   group('Evaluator._evaluateWordPress plugin handling', () {
     test('a plugin with vulnerableDescription "None" produces no issue', () {
       final site = _wordpressSite(plugins: [
