@@ -26,9 +26,9 @@
         </v-list>
         <div class="d-flex justify-end">
           <v-btn icon @click.stop="miniVariant = !miniVariant">
-            <v-icon
-              >mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon
-            >
+            <v-icon>
+              mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}
+            </v-icon>
           </v-btn>
         </div>
       </v-layout>
@@ -49,40 +49,40 @@
       </v-list>
     </v-navigation-drawer> -->
     <v-footer class="justify-end">
-        &copy; {{ new Date().getFullYear() }} Clockwork
+      &copy; {{ new Date().getFullYear() }} Clockwork
     </v-footer>
   </v-app>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       clipped: true,
       drawer: false,
       fixed: true,
       items: [
         {
-          icon: "mdi-chart-bubble",
-          title: "Sites",
-          to: "/",
+          icon: 'mdi-chart-bubble',
+          title: 'Sites',
+          to: '/'
         },
         {
-          icon: "mdi-puzzle",
-          title: "Plugin Use",
-          to: "/plugins",
+          icon: 'mdi-puzzle',
+          title: 'Plugin Use',
+          to: '/plugins'
         },
         {
-          icon: "mdi-apps",
-          title: "Pantheon Overview",
-          to: "/overview",
-        },
+          icon: 'mdi-apps',
+          title: 'Pantheon Overview',
+          to: '/overview'
+        }
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "Clockwork's Pantheon Site Status",
-    };
-  },
-};
+      title: "Clockwork's Pantheon Site Status"
+    }
+  }
+}
 </script>

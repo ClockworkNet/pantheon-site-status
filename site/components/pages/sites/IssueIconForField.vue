@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PagesSitesIssueIcon :issue="matchingIssue"></PagesSitesIssueIcon>
+    <PagesSitesIssueIcon :issue="matchingIssue" />
   </div>
 </template>
 <script>
@@ -9,13 +9,13 @@ export default {
     'fieldName',
     'site'
   ],
-  mounted() {
-    console.info('test', this.site);
-  },
   computed: {
-    matchingIssue() {
-      return this.site.issues.find(issue => issue.related_field === this.fieldName);
+    matchingIssue () {
+      return this.site.issues.find(issue => issue.related_field === this.fieldName)
     }
+  },
+  mounted () {
+    console.info('test', this.site)
   }
 }
 </script>

@@ -11,7 +11,7 @@
                 label="Search"
                 single-line
                 hide-details
-              ></v-text-field>
+              />
             </v-col>
           </v-row>
         </v-card-text>
@@ -26,23 +26,27 @@
           :sort-by="['sitesCount', 'name']"
           :sort-desc="[true, false]"
         >
-          <template v-slot:expanded-item="{ headers, item }">
+          <template #expanded-item="{ headers, item }">
             <td :colspan="headers.length">
               <v-row>
                 <v-col>
                   <v-card :elevation="0">
                     <v-list>
-                      <v-subheader class="uppercase">Sites</v-subheader>
+                      <v-subheader class="uppercase">
+                        Sites
+                      </v-subheader>
                       <template v-for="site in item.sites">
                         <v-list-item :key="site.name">
-                          <v-list-item-content>{{
-                            site.name
-                          }}</v-list-item-content>
+                          <v-list-item-content>
+                            {{
+                              site.name
+                            }}
+                          </v-list-item-content>
                           <v-list-item-content class="align-end">
                             {{ site.version }}
                           </v-list-item-content>
                         </v-list-item>
-                        <v-divider :key="site.name"></v-divider>
+                        <v-divider :key="site.name" />
                       </template>
                     </v-list>
                   </v-card>
@@ -51,45 +55,45 @@
             </td>
           </template>
         </v-data-table>
-        <v-card-actions> </v-card-actions>
+        <v-card-actions />
       </v-card>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 export default {
-  data() {
+  data () {
     return {
-      search: "",
+      search: '',
       expanded: [],
       headers: [
         {
-          text: "Plugin",
-          align: "start",
-          value: "name",
+          text: 'Plugin',
+          align: 'start',
+          value: 'name'
         },
-        { text: "Sites", value: "sitesCount" },
-        { text: "Upgrades", value: "upgradesCount" },
-        { text: "Latest", value: "latest" },
-      ],
-    };
+        { text: 'Sites', value: 'sitesCount' },
+        { text: 'Upgrades', value: 'upgradesCount' },
+        { text: 'Latest', value: 'latest' }
+      ]
+    }
   },
   computed: {
-    ...mapGetters("sites", ["pluginToSiteMap"]),
-    plugins() {
+    ...mapGetters('sites', ['pluginToSiteMap']),
+    plugins () {
       return Object.values(this.pluginToSiteMap).map((plugin) => {
-        let newPlugin = { ...plugin };
-        newPlugin.sitesCount = plugin.sites.length;
-        newPlugin.upgradesCount = plugin.upgrades.length;
-        return newPlugin;
-      });
-    },
+        const newPlugin = { ...plugin }
+        newPlugin.sitesCount = plugin.sites.length
+        newPlugin.upgradesCount = plugin.upgrades.length
+        return newPlugin
+      })
+    }
   },
   methods: {},
-  components: {},
-};
+  components: {}
+}
 </script>
 
 <style scoped>

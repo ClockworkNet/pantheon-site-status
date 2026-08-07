@@ -53,6 +53,12 @@ class Site extends Model {
   /// Plugins currently installed on the site.
   List<WordPressPlugin> plugins;
 
+  /// True if fetching this site's plugin list failed, as opposed to the
+  /// site genuinely having zero plugins. Not serialized directly -- the
+  /// evaluator turns this into a visible issue instead of leaving a
+  /// failed fetch looking identical to "no plugins, all clear".
+  bool pluginFetchFailed = false;
+
   /// Potential issues found on the site.
   List<SiteIssue> issues;
 
@@ -82,6 +88,19 @@ class Site extends Model {
     return true;
   }
 
+  /// Return true if this site runs WordPress, in any of the framework
+  /// variants Pantheon reports for it (e.g. `wordpress_network` for
+  /// WordPress Multisite). Use this instead of comparing [cmsName] to the
+  /// literal string `'wordpress'` -- that exact-match check previously
+  /// caused multisite installs to silently skip all WordPress evaluation
+  /// (no version fetch, no plugin fetch, no vulnerability check) while
+  /// still displaying as if everything were fine.
+  bool get isWordPress =>
+      cmsName == 'wordpress' || cmsName == 'wordpress_network';
+
+  /// True if this is a WordPress Multisite install.
+  bool get isMultisite => cmsName == 'wordpress_network';
+
   /// Convert a site to JSON.
   Map<String, dynamic> toJson() => {
         'name': pantheonName,
@@ -89,6 +108,7 @@ class Site extends Model {
         'created':
             created == null ? '' : DateFormat('yyyy-MMM-dd').format(created!),
         'cms': cmsName,
+        'is_multisite': isMultisite,
         'cms_version': cmsVersion,
         'cms_version_status': cmsStability,
         'pantheon_plan': pantheonPlanName,

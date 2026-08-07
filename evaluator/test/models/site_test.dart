@@ -25,4 +25,35 @@ void main() {
     expect(result['tags'][1], 'tag-2');
     expect(result['php_version'], '7.0');
   });
+
+  group('isWordPress', () {
+    // Regression coverage: Pantheon reports WordPress Multisite installs
+    // with framework/cmsName "wordpress_network", not "wordpress". An
+    // exact-match check on cmsName previously caused these sites to
+    // silently skip all WordPress evaluation (no version/plugin fetch,
+    // no vulnerability check) while still displaying as clean.
+    test('is true for a regular WordPress site', () {
+      expect(Site(cmsName: 'wordpress').isWordPress, isTrue);
+    });
+
+    test('is true for a WordPress Multisite install', () {
+      expect(Site(cmsName: 'wordpress_network').isWordPress, isTrue);
+    });
+
+    test('is false for a non-WordPress site', () {
+      expect(Site(cmsName: 'drupal').isWordPress, isFalse);
+    });
+  });
+
+  group('isMultisite', () {
+    test('is true only for wordpress_network', () {
+      expect(Site(cmsName: 'wordpress_network').isMultisite, isTrue);
+      expect(Site(cmsName: 'wordpress').isMultisite, isFalse);
+    });
+
+    test('toJson includes is_multisite', () {
+      expect(Site(cmsName: 'wordpress_network').toJson()['is_multisite'], isTrue);
+      expect(Site(cmsName: 'wordpress').toJson()['is_multisite'], isFalse);
+    });
+  });
 }

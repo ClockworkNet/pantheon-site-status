@@ -77,7 +77,7 @@ class Evaluator {
       ));
     }
 
-    if (site.cmsName == 'wordpress') _evaluateWordPress(site);
+    if (site.isWordPress) _evaluateWordPress(site);
     if (site.cmsName == 'drupal') _evaluateDrupal(site);
   }
 
@@ -89,6 +89,14 @@ class Evaluator {
         severity: alert,
         relatedField: 'cms_version_status',
         description: 'CMS Version',
+      ));
+    }
+
+    if (site.pluginFetchFailed) {
+      site.issues.add(const SiteIssue(
+        severity: 'warning',
+        relatedField: 'plugin',
+        description: 'Could not fetch plugin data for this site',
       ));
     }
 
