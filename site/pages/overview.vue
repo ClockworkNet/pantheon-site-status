@@ -19,26 +19,26 @@
 </template>
 
 <script>
-import SiteSummaryCard from "../components/SiteSummaryCard";
+import SiteSummaryCard from '../components/SiteSummaryCard'
 export default {
-  data() {
-    return {};
+  components: {
+    SiteSummaryCard
+  },
+  data () {
+    return {}
   },
   computed: {
-    sites() {
-      return this.$store.state.sites.list;
-    },
+    sites () {
+      return this.$store.state.sites.list
+    }
   },
   methods: {
-    countByParam(param, name) {
-      return this.sites.filter((site) => site[param] == name);
+    countByParam (param, name) {
+      return this.sites.filter(site => site[param] === name)
     },
-    optionsByParam(param) {
-      return [...new Set(this.sites.map((site) => site[param]))];
-    },
-  },
-  components: {
-    SiteSummaryCard,
-  },
-};
+    optionsByParam (param) {
+      return [...new Set(this.sites.map(site => site[param]))]
+    }
+  }
+}
 </script>

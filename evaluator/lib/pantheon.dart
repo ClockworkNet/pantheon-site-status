@@ -37,18 +37,20 @@ class Pantheon {
   }
 
   /// Run a terminus command for [siteName] and log a warning to stderr if
-  /// it exits non-zero. Returns the trimmed stdout either way (empty on
-  /// failure), so callers get the same "blank" value they always did, but
-  /// the failure itself is no longer silent.
+  /// it exits non-zero. Returns the trimmed stdout on success, or '' on
+  /// failure -- never the raw stdout content of a failed command, since
+  /// some WP-CLI errors (e.g. "This does not seem to be a WordPress
+  /// installation") get written to stdout rather than stderr, and would
+  /// otherwise get treated as if they were the real field value.
   Future<String> _runTerminus(List<String> args, String siteName) {
     return Process.run('terminus', args).then((result) {
-      final output = result.stdout.toString().trim();
       if (result.exitCode != 0) {
         stderr.writeln(
             'Warning: `terminus ${args.join(' ')}` failed for $siteName '
             '(exit code ${result.exitCode}). stderr:\n${result.stderr.toString().trim()}');
+        return '';
       }
-      return output;
+      return result.stdout.toString().trim();
     });
   }
 
@@ -91,16 +93,45 @@ class Pantheon {
         ['upstream:updates:status', '$siteName.live'], siteName);
   }
 
-  /// Get the WordPress CMS version for the site.
-  Future<String> fetchWordPressVersion(String siteName) {
-    return _runTerminus(
-        ['wp', '-y', '$siteName.live', '--', 'core', 'version'], siteName);
+  /// Get the domain of a WordPress Multisite network's primary (blog_id 1)
+  /// site, read directly from the database. This deliberately bypasses
+  /// WP-CLI's usual URL-based site resolution: on some networks, a custom
+  /// domain was set as the registered site rather than the Pantheon
+  /// platform URL, so passing the platform URL to a normal `wp` command
+  /// fails with "Site ... not found. Verify DOMAIN_CURRENT_SITE...".
+  /// A raw `db query` doesn't need to resolve a site by URL at all, so it
+  /// works regardless of that mismatch, and gives us the real domain to
+  /// pass as `--url` to subsequent commands. Returns '' if it fails.
+  Future<String> fetchMultisitePrimaryDomain(String siteName) {
+    return _runTerminus([
+      'wp',
+      '-y',
+      '$siteName.live',
+      '--',
+      'db',
+      'query',
+      'SELECT domain FROM wp_blogs WHERE blog_id = 1',
+      '--skip-column-names',
+    ], siteName);
   }
 
-  /// Get the information about the plugins for a WordPress site.
+  /// Get the WordPress CMS version for the site. [url] should be provided
+  /// for WordPress Multisite installs (see [fetchMultisitePrimaryDomain])
+  /// where the site's own live URL may not resolve.
+  Future<String> fetchWordPressVersion(String siteName, {String? url}) {
+    final args = ['wp', '-y', '$siteName.live', '--', 'core', 'version'];
+    if (url != null && url.isNotEmpty) args.add('--url=$url');
+    return _runTerminus(args, siteName);
+  }
+
+  /// Get the information about the plugins for a WordPress site, or null
+  /// if the fetch failed -- callers must not treat null the same as "the
+  /// site genuinely has zero plugins". [url] should be provided for
+  /// WordPress Multisite installs (see [fetchMultisitePrimaryDomain]).
   /// example: terminus wp -y jb-group.live -- launchcheck plugins --format=json
-  Future<List<WordPressPlugin>> fetchWordPressPlugins(String siteName) {
-    return Process.run('terminus', [
+  Future<List<WordPressPlugin>?> fetchWordPressPlugins(String siteName,
+      {String? url}) {
+    final args = [
       'wp',
       '-y',
       '$siteName.live',
@@ -108,12 +139,15 @@ class Pantheon {
       'launchcheck',
       'plugins',
       '--format=json',
-    ]).then((result) {
+    ];
+    if (url != null && url.isNotEmpty) args.add('--url=$url');
+
+    return Process.run('terminus', args).then((result) {
       if (result.exitCode == 1) {
         stderr.writeln(
             'Warning: `terminus wp launchcheck plugins` failed for $siteName '
             '(exit code 1). stderr:\n${result.stderr.toString().trim()}');
-        return const [];
+        return null;
       }
 
       final output = result.stdout.toString();
@@ -121,7 +155,7 @@ class Pantheon {
       if (jsonPayload == null) {
         stderr.writeln(
             'Warning: no JSON object found in `wp launchcheck plugins` output for $siteName. Raw output:\n${output.trim()}');
-        return const [];
+        return null;
       }
 
       try {
@@ -129,7 +163,7 @@ class Pantheon {
       } on FormatException {
         stderr.writeln(
             'Warning: could not parse `wp launchcheck plugins` JSON for $siteName. Raw output:\n${output.trim()}');
-        return const [];
+        return null;
       }
     });
   }

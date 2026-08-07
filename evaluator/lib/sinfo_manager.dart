@@ -104,11 +104,27 @@ class SinfoManager {
     site.phpStability = evaluator.phpStability(site.phpVersion);
 
     site.cmsStability = 'unknown';
-    if (site.cmsName == 'wordpress') {
-      site.cmsVersion = await pantheon.fetchWordPressVersion(site.pantheonName);
+    if (site.isWordPress) {
+      String? url;
+      if (site.isMultisite) {
+        url = await pantheon.fetchMultisitePrimaryDomain(site.pantheonName);
+        if (url.isEmpty) url = null;
+      }
+
+      site.cmsVersion =
+          await pantheon.fetchWordPressVersion(site.pantheonName, url: url);
       site.cmsStability =
           await wordPress.fetchVersionStability(site.cmsVersion);
-      site.plugins = await pantheon.fetchWordPressPlugins(site.pantheonName);
+
+      final plugins = await pantheon.fetchWordPressPlugins(
+        site.pantheonName,
+        url: url,
+      );
+      if (plugins == null) {
+        site.pluginFetchFailed = true;
+      } else {
+        site.plugins = plugins;
+      }
     }
 
     return site;
