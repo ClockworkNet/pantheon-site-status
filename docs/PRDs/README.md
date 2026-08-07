@@ -13,6 +13,7 @@ Work is organized into iterations, each its own PRD. Move a PRD's file from `Tod
 | 08 | [WordPress Multisite Sites Silently Unevaluated](Completed/08-wordpress-multisite-evaluation-gap.md) | P1 |
 | 09 | [Remove Misleading "Vulnerable" Plugin Count](Completed/09-remove-misleading-vulnerability-count.md) | P1 |
 | 10 | [WordPress Version Column, and a Stdout-Error-Leak Bug It Surfaced](Completed/10-wordpress-version-column-and-stdout-error-leak.md) | P2/P1 |
+| 11 | [Stale PHP Version Support Map](Completed/11-stale-php-version-support-map.md) | P2 |
 
 ## Todo
 
@@ -31,5 +32,7 @@ PRD 08 was discovered live while reviewing PRD 04's work in the browser — same
 PRD 09 followed directly from investigating PRD 08 — the "Vulnerable" count turned out to be sourced from a WP-CLI command that only ever checked for plugin updates, never vulnerabilities. Removed rather than left misleading; a real vulnerability-checking integration is a separate future decision (needs an external API key).
 
 PRD 10 was a small feature request (a WP Version column) that immediately surfaced a real bug: a failed Terminus command's stdout — sometimes literally an error message — was being trusted as real field data. Fixed at the shared `_runTerminus` helper, so it can't recur for any field that goes through it.
+
+PRD 11 was noticed directly from the new WP Version column's sibling PHP status field — the manually-maintained PHP support map (a documented playbook in the root README) had simply gone stale and was missing PHP 8.3 entirely.
 
 Background: [../REQUIREMENTS.md](../REQUIREMENTS.md) and [../RECOMMENDATIONS.md](../RECOMMENDATIONS.md).
