@@ -19,6 +19,9 @@
       <template v-slot:item.cms_version="{ item }">
         <span :class="{ 'red--text': item.cms_version_status === 'insecure' }">{{ item.cms_version }}</span>
       </template>
+      <template v-slot:item.php_version="{ item }">
+        <span :class="{ 'red--text': item.php_version_status === 'end of life' }">{{ item.php_version }}</span>
+      </template>
       <template v-slot:item.issuePriority="{ item }">
         <v-icon small :color="item.issueSummary">
           {{
@@ -198,6 +201,7 @@ export default {
           value: 'name'
         },
         { text: 'WP Version', value: 'cms_version', width: 120 },
+        { text: 'PHP Version', value: 'php_version', width: 120 },
         { text: 'Issues', value: 'issuePriority', width: 100 },
         { text: 'Actions', value: 'actions', sortable: false, align: 'end', width: 75 }
       ]
