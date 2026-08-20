@@ -136,13 +136,22 @@ class SinfoManager {
     final loading = LoadingBar();
     loading.start();
 
-    return File(resultsPath)
-        .create(recursive: true)
-        .then((file) => file.writeAsString(json.encode(sites)).then((file) {
-              loading.stop('Results saved to file $resultsPath');
-              return file;
-            }));
+    return File(resultsPath).create(recursive: true).then((file) =>
+        file.writeAsString(json.encode(resultsPayload(sites))).then((file) {
+          loading.stop('Results saved to file $resultsPath');
+          return file;
+        }));
   }
+}
+
+/// JSON envelope written to the results file. [generatedAt] is stored as
+/// UTC ISO-8601 so the dashboard can show when the data was produced.
+Map<String, dynamic> resultsPayload(List<Site> sites, {DateTime? generatedAt}) {
+  final timestamp = (generatedAt ?? DateTime.now()).toUtc();
+  return {
+    'generated_at': timestamp.toIso8601String(),
+    'sites': sites,
+  };
 }
 
 /// This adapter is used to control the width of the progress bar.
