@@ -13,6 +13,9 @@
             <span>Clockwork sites hosted on Pantheon</span>
           </v-tooltip>
         </h1>
+        <p v-if="formattedGeneratedAt" class="caption grey--text mb-0 data-updated">
+          Data updated on {{ formattedGeneratedAt }}
+        </p>
       </v-col>
       <v-col cols="3">
         <v-text-field
@@ -46,6 +49,8 @@
 </template>
 
 <script>
+import { formatGeneratedAt } from '~/utils/sitesPayload'
+
 export default {
   props: [
     'search',
@@ -72,6 +77,9 @@ export default {
         console.info(value)
         this.$emit('update:selectedTags', value)
       }
+    },
+    formattedGeneratedAt () {
+      return formatGeneratedAt(this.$store.state.sites.generatedAt)
     },
     tags () { return this.$store.getters['sites/tags'] },
     tagOptions () {

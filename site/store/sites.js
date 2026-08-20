@@ -1,8 +1,12 @@
 import sites from '~/data/sites.json'
 import { buildPluginToSiteMap } from '~/utils/pluginAggregation'
+import { parseSitesPayload } from '~/utils/sitesPayload'
+
+const payload = parseSitesPayload(sites)
 
 export const state = () => ({
-  list: sites
+  list: payload.list,
+  generatedAt: payload.generatedAt
 })
 
 export const mutations = {
