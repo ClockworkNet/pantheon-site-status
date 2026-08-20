@@ -30,8 +30,8 @@ describe('parseSitesPayload', () => {
 })
 
 describe('formatGeneratedAt', () => {
-  it('formats a UTC timestamp as a long date', () => {
-    expect(formatGeneratedAt('2026-08-20T06:00:00.000Z')).toBe('August 20, 2026')
+  it('formats a UTC timestamp in Chicago time', () => {
+    expect(formatGeneratedAt('2026-08-20T06:00:00.000Z')).toBe('August 20, 2026 at 1:00 AM CDT')
   })
 
   it('returns an empty string when the timestamp is missing', () => {

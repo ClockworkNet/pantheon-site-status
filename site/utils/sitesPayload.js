@@ -19,10 +19,13 @@ export function formatGeneratedAt (iso) {
     return ''
   }
 
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    timeZone: 'UTC'
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'America/Chicago',
+    timeZoneName: 'short'
   })
 }
