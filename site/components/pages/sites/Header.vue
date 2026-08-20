@@ -1,7 +1,7 @@
 <template>
   <div class="search-row">
     <v-row>
-      <v-col cols="6">
+      <v-col cols="5">
         <h1>
           Sites
           <v-tooltip bottom>
@@ -27,7 +27,7 @@
           @change="searchChange"
         />
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-select
           v-model="selectedTagsValue"
           flat
@@ -44,6 +44,14 @@
           </template>
         </v-select>
       </v-col>
+      <v-col cols="2" class="d-flex align-center justify-end">
+        <v-btn outlined small @click="$emit('download-csv')">
+          <v-icon left small>
+            mdi-download
+          </v-icon>
+          CSV
+        </v-btn>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -58,7 +66,8 @@ export default {
   ],
   emits: [
     'update:search',
-    'update:selectedTags'
+    'update:selectedTags',
+    'download-csv'
   ],
   computed: {
     searchValue: {

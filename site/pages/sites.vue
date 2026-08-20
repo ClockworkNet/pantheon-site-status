@@ -6,6 +6,7 @@
         :selected-tags="selectedTags"
         @update:search="search = $event"
         @update:selectedTags="selectedTags = $event"
+        @download-csv="downloadCsv"
       />
       <PagesSitesTable :search="search" :filters="filters" :sites="filtered" />
 
@@ -86,6 +87,7 @@
 
 <script>
 import { needsUpgrade } from '~/utils/pluginStatus'
+import { buildSitesCsv, downloadSitesCsv, sitesCsvFilename } from '~/utils/sitesCsv'
 
 export default {
   data () {
@@ -150,6 +152,10 @@ export default {
         : issues.find(issue => issue.level === 'warning')
           ? 'yellow'
           : 'green'
+    },
+    downloadCsv () {
+      const csv = buildSitesCsv(this.filtered, { search: this.search })
+      downloadSitesCsv(csv, sitesCsvFilename(this.$store.state.sites.generatedAt))
     }
   }
 }
