@@ -76,7 +76,7 @@ class Evaluator {
     }
 
     final newRelicAlert = newRelicAlerts[site.newRelicStatus] ?? 'warning';
-    if (newRelicAlert != 'okay') {
+    if (site.supportsNewRelic && newRelicAlert != 'okay') {
       site.issues.add(SiteIssue(
         severity: newRelicAlert,
         relatedField: 'new_relic_status',
