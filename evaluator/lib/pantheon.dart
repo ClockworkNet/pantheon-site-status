@@ -4,13 +4,32 @@ import 'dart:io';
 import 'models/site.dart';
 import 'models/wordpress_plugin.dart';
 
+/// Signature of [Process.run], injectable so tests can fake terminus.
+typedef ProcessRunner = Future<ProcessResult> Function(
+    String executable, List<String> arguments);
+
 /// This class provides easy access in Dart to Pantheon terminus commands.
 class Pantheon {
   /// Pantheon's organization ID for the organization owning the sites.
   final String pantheonOrgId;
 
+  /// Total tries for a terminus command before giving up. Pantheon's SSH
+  /// gateway intermittently rejects connections ("The requested resource
+  /// is locked"), and a retry a few seconds later usually succeeds.
+  final int maxAttempts;
+
+  /// Base wait between attempts; multiplied by the attempt number.
+  final Duration retryDelay;
+
+  final ProcessRunner _runProcess;
+
   /// Default constructor.
-  Pantheon({required this.pantheonOrgId});
+  Pantheon({
+    required this.pantheonOrgId,
+    this.maxAttempts = 3,
+    this.retryDelay = const Duration(seconds: 3),
+    ProcessRunner? runProcess,
+  }) : _runProcess = runProcess ?? Process.run;
 
   /// Return true if Pantheon's terminus is installed.
   Future<bool> isTerminusInstalled() async {
@@ -26,14 +45,30 @@ class Pantheon {
 
   /// Get the list of all sites from Pantheon.
   Future<Map<dynamic, dynamic>> fetchSitesJson() async {
-    return Process.run('terminus', [
+    return _runTerminusWithRetry([
       'org:site:list',
       '--no-interaction',
       '--format=json',
       pantheonOrgId,
-    ]).then((result) {
+    ], 'organization $pantheonOrgId')
+        .then((result) {
       return json.decode(result.stdout);
     });
+  }
+
+  /// Run terminus with [args], retrying up to [maxAttempts] times while it
+  /// exits non-zero. Returns the last result, successful or not.
+  Future<ProcessResult> _runTerminusWithRetry(
+      List<String> args, String siteName) async {
+    for (var attempt = 1;; attempt++) {
+      final result = await _runProcess('terminus', args);
+      if (result.exitCode == 0 || attempt >= maxAttempts) return result;
+
+      stderr.writeln('Warning: `terminus ${args.join(' ')}` failed for '
+          '$siteName (exit code ${result.exitCode}, attempt $attempt/'
+          '$maxAttempts). Retrying...');
+      await Future.delayed(retryDelay * attempt);
+    }
   }
 
   /// Run a terminus command for [siteName] and log a warning to stderr if
@@ -43,7 +78,7 @@ class Pantheon {
   /// installation") get written to stdout rather than stderr, and would
   /// otherwise get treated as if they were the real field value.
   Future<String> _runTerminus(List<String> args, String siteName) {
-    return Process.run('terminus', args).then((result) {
+    return _runTerminusWithRetry(args, siteName).then((result) {
       if (result.exitCode != 0) {
         stderr.writeln(
             'Warning: `terminus ${args.join(' ')}` failed for $siteName '
@@ -82,8 +117,7 @@ class Pantheon {
   /// A properly configured site will the status "active".
   /// example: terminus new-relic:info jb-group --field=state
   Future<String> fetchNewRelicStatus(String siteName) {
-    return _runTerminus(['new-relic:info', siteName, '--field=state'],
-            siteName)
+    return _runTerminus(['new-relic:info', siteName, '--field=state'], siteName)
         .then((status) => status.isEmpty ? 'unknown' : status);
   }
 
@@ -142,11 +176,12 @@ class Pantheon {
     ];
     if (url != null && url.isNotEmpty) args.add('--url=$url');
 
-    return Process.run('terminus', args).then((result) {
-      if (result.exitCode == 1) {
+    return _runTerminusWithRetry(args, siteName).then((result) {
+      if (result.exitCode != 0) {
         stderr.writeln(
             'Warning: `terminus wp launchcheck plugins` failed for $siteName '
-            '(exit code 1). stderr:\n${result.stderr.toString().trim()}');
+            '(exit code ${result.exitCode}). stderr:\n'
+            '${result.stderr.toString().trim()}');
         return null;
       }
 

@@ -168,6 +168,34 @@ void main() {
     });
   });
 
+  group('Evaluator New Relic check', () {
+    test('an inactive New Relic status on a paid plan produces a warning', () {
+      final site = Site(
+        pantheonPlanName: 'Performance Small',
+        newRelicStatus: 'unknown',
+      );
+
+      Evaluator().evaluateSite(site);
+
+      expect(
+        site.issues.where((i) => i.relatedField == 'new_relic_status'),
+        hasLength(1),
+      );
+    });
+
+    test('Basic plan sites are not flagged, since Pantheon does not offer '
+        'New Relic on Basic', () {
+      final site = Site(pantheonPlanName: 'Basic', newRelicStatus: 'unknown');
+
+      Evaluator().evaluateSite(site);
+
+      expect(
+        site.issues.where((i) => i.relatedField == 'new_relic_status'),
+        isEmpty,
+      );
+    });
+  });
+
   group('Evaluator._evaluateDrupal', () {
     test('Drupal sites get an explicit "not evaluated" warning', () {
       final site = Site(cmsName: 'drupal', pantheonName: 'drupal-site');
