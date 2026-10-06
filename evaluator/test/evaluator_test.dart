@@ -185,7 +185,10 @@ void main() {
 
     test('Basic plan sites are not flagged, since Pantheon does not offer '
         'New Relic on Basic', () {
-      final site = Site(pantheonPlanName: 'Basic', newRelicStatus: 'unknown');
+      final site = Site(
+        pantheonPlanName: 'Basic',
+        newRelicStatus: Site.newRelicNotOnPlan,
+      );
 
       Evaluator().evaluateSite(site);
 
@@ -193,6 +196,8 @@ void main() {
         site.issues.where((i) => i.relatedField == 'new_relic_status'),
         isEmpty,
       );
+      expect(site.toJson()['new_relic_status'],
+          "Not included on this site's plan");
     });
   });
 
