@@ -99,7 +99,9 @@ class SinfoManager {
 
     site.phpVersion = await pantheon.fetchPhpVersion(site.pantheonName);
     site.liveUrl = await pantheon.fetchLiveUrl(site.pantheonName);
-    site.newRelicStatus = await pantheon.fetchNewRelicStatus(site.pantheonName);
+    site.newRelicStatus = site.supportsNewRelic
+        ? await pantheon.fetchNewRelicStatus(site.pantheonName)
+        : Site.newRelicNotOnPlan;
     site.upstreamStatus = await pantheon.fetchUpstreamStatus(site.pantheonName);
     site.phpStability = evaluator.phpStability(site.phpVersion);
 

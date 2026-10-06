@@ -91,6 +91,9 @@ class Site extends Model {
   /// Pantheon doesn't offer New Relic on Basic plans.
   bool get supportsNewRelic => pantheonPlanName.toLowerCase() != 'basic';
 
+  /// [newRelicStatus] for sites whose plan doesn't include New Relic.
+  static const newRelicNotOnPlan = "Not included on this site's plan";
+
   /// Return true if this site runs WordPress, in any of the framework
   /// variants Pantheon reports for it (e.g. `wordpress_network` for
   /// WordPress Multisite). Use this instead of comparing [cmsName] to the
